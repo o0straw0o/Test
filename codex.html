@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+/* ── STYLES CODEX ─────────────────────────────────────────────────────────── */
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+.page-hdr{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;letter-spacing:.08em;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.page-hdr-icon{font-size:1.2rem;opacity:.7;}
+
+.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
+.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
+.filter-btn:hover{background:#333;color:#f0f0f0;}
+.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
+.search-input{padding:5px 12px;background:#252525;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;font-family:'Crimson Text',serif;font-size:.85rem;font-style:italic;color:#f0f0f0;outline:none;transition:border-color .15s;margin-left:auto;}
+.search-input::placeholder{color:rgba(255,255,255,.42);}
+.count-line{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:10px;}
+
+.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
+.codex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;align-items:start;}
+
+.codex-card{background:#141414;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
+.codex-card:not(.open):hover{background:#1e1e1e;}
+.codex-card.open{cursor:default;border-color:rgba(255,255,255,.3);}
+.codex-card.mj-only{border-color:rgba(200,60,60,.35);}
+
+.codex-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
+.codex-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px;opacity:.75;}
+.codex-head-info{flex:1;min-width:0;}
+.codex-titre{font-family:'Cinzel',serif;font-size:.82rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:3px;}
+.codex-meta{font-size:.72rem;font-style:italic;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.codex-statut{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid;border-radius:20px;padding:2px 9px;white-space:nowrap;flex-shrink:0;}
+.codex-statut.revele{border-color:#3a8a3a;color:#6abf6a;}
+.codex-statut.partiel{border-color:#a07020;color:#d4a030;}
+.codex-statut.cache{border-color:#9a3030;color:#c06060;}
+.codex-chevron{font-size:.62rem;color:rgba(255,255,255,.4);transition:transform .2s;margin-top:2px;flex-shrink:0;}
+.codex-card.open .codex-chevron{transform:rotate(180deg);}
+
+.codex-div{height:1px;background:rgba(255,255,255,.12);margin:0 14px;display:none;}
+.codex-card.open .codex-div{display:block;}
+.codex-body{padding:0 14px 14px;display:none;}
+.codex-card.open .codex-body{display:block;}
+
+.codex-contenu{font-size:.85rem;line-height:1.7;color:rgba(255,255,255,.8);font-style:italic;margin:10px 0 6px;white-space:pre-wrap;}
+.codex-notes-mj{margin-top:10px;padding:8px 10px;background:rgba(200,60,60,.08);border-left:3px solid rgba(200,60,60,.4);border-radius:0 6px 6px 0;font-size:.78rem;color:rgba(255,180,120,.8);font-style:italic;}
+.codex-notes-mj-lbl{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,120,60,.6);display:block;margin-bottom:3px;}
+.codex-session{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:8px;font-style:italic;}
+
+.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
+
+@media(max-width:640px){.codex-grid{grid-template-columns:1fr;}.search-input{margin-left:0;width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="page-hdr"><span class="page-hdr-icon">🗎</span> Codex</div>
+  <div class="filters-bar" id="filters-bar">
+    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
+    <input class="search-input" type="text" id="search-input" placeholder="Rechercher…" oninput="applyFilters()">
+  </div>
+  <div class="count-line" id="count-line"></div>
+  <div class="grid-wrap">
+    <div class="codex-grid" id="codex-grid">
+      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let CODEX_DATA = [];
+let currentFilter = 'tous';
+
+const TYPE_ICONS = {
+  livre: '📖',
+  parchemin: `🗎`,
+  inscription: '✎',
+  oral: '◎',
+  carte: '◈'
+};
+const TYPE_LABELS = {
+  livre: 'Livre',
+  parchemin: 'Parchemin',
+  inscription: 'Inscription',
+  oral: 'Tradition orale',
+  carte: 'Carte'
+};
+
+function buildFilters() {
+  const types = [...new Set(CODEX_DATA.map(c => c.type).filter(Boolean))];
+  const bar = document.getElementById('filters-bar');
+  const search = document.getElementById('search-input');
+  bar.querySelectorAll('.filter-btn:not([data-filter="tous"])').forEach(b => b.remove());
+  types.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filter = t;
+    btn.onclick = () => setFilter(t, btn);
+    btn.textContent = TYPE_LABELS[t] || t;
+    bar.insertBefore(btn, search);
+  });
+  const active = bar.querySelector('[data-filter="' + currentFilter + '"]');
+  if (active) active.classList.add('active');
+}
+
+async function init() {
+  try {
+    // Page visibility guard
+    const cfg = JSON.parse(localStorage.getItem('sw_settings') || '{}');
+    if (cfg.codex_visible_joueurs === false && !getMJMode()) {
+      document.getElementById('codex-grid').innerHTML = '<p class="empty-msg">Page non disponible.</p>';
+      document.getElementById('count-line').textContent = '';
+      return;
+    }
+    CODEX_DATA = await loadData('codex.json');
+    buildFilters();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('codex-grid').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Données inaccessibles en file://. Utiliser un serveur local.</p>';
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const isMJ = getMJMode();
+  let filtered = isMJ
+    ? CODEX_DATA
+    : CODEX_DATA.filter(c => c.visible_joueurs === true && c.statut !== 'cache');
+  if (currentFilter !== 'tous') filtered = filtered.filter(c => c.type === currentFilter);
+  if (q) filtered = filtered.filter(c =>
+    (c.titre || '').toLowerCase().includes(q) ||
+    (c.contenu || '').toLowerCase().includes(q));
+  renderGrid(filtered);
+  const total = isMJ ? CODEX_DATA.length : CODEX_DATA.filter(c => c.visible_joueurs === true && c.statut !== 'cache').length;
+  document.getElementById('count-line').textContent =
+    filtered.length === total ? `${total} entr${total > 1 ? 'ées' : 'ée'}` : `${filtered.length} / ${total} entrées`;
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function buildCard(c) {
+  const icon = TYPE_ICONS[c.type] || '◈';
+  const typeLabel = TYPE_LABELS[c.type] || c.type || '';
+  const statut = c.statut || 'cache';
+  const isMJ = getMJMode();
+  const mjOnly = c.visible_joueurs === false || c.visible_joueurs === undefined;
+  const sessionLine = c.session_decouverte
+    ? `<div class="codex-session">Session de découverte : ${esc(c.session_decouverte)}</div>` : '';
+  const notesMJ = (isMJ && c.notes_mj)
+    ? `<div class="codex-notes-mj mj-only"><span class="codex-notes-mj-lbl">Notes MJ</span>${esc(c.notes_mj)}</div>` : '';
+  // Pour les joueurs, n'afficher le contenu que si révélé ou partiel
+  const showContent = isMJ || statut === 'revele' || statut === 'partiel';
+  const contenu = showContent && c.contenu
+    ? `<div class="codex-contenu">${esc(c.contenu)}</div>` : '';
+  return `<div class="codex-card${isMJ && mjOnly ? ' mj-only' : ''}" onclick="toggleCard(this)">
+  <div class="codex-head">
+    <div class="codex-icon">${icon}</div>
+    <div class="codex-head-info">
+      <div class="codex-titre">${esc(c.titre)}</div>
+      <div class="codex-meta"><span>${typeLabel}</span>${isMJ ? `<span class="codex-statut ${statut}">${statut}</span>` : ''}</div>
+    </div>
+    <div class="codex-chevron">▾</div>
+  </div>
+  <div class="codex-div"></div>
+  <div class="codex-body">
+    ${contenu}
+    ${sessionLine}
+    ${notesMJ}
+  </div>
+</div>`;
+}
+
+function toggleCard(el) {
+  el.classList.toggle('open');
+}
+
+function renderGrid(data) {
+  const grid = document.getElementById('codex-grid');
+  if (!data.length) { grid.innerHTML = '<p class="empty-msg">Aucune entrée correspondante.</p>'; return; }
+  grid.innerHTML = data.map(buildCard).join('');
+  applyMJMode(getMJMode());
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
