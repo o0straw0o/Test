@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monstres — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+
+/* MJ-guard */
+#mj-guard{display:none;text-align:center;padding:80px 20px;}
+.guard-icon{font-size:2rem;margin-bottom:14px;}
+.guard-ttl{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;}
+.guard-sub{font-size:.88rem;font-style:italic;color:rgba(255,255,255,.5);}
+
+/* FILTERS */
+.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
+.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
+.filter-btn:hover{background:#333;color:#f0f0f0;}
+.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
+.search-input{padding:5px 12px;background:#252525;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;font-family:'Crimson Text',serif;font-size:.85rem;font-style:italic;color:#f0f0f0;outline:none;transition:border-color .15s;margin-left:auto;}
+.search-input::placeholder{color:rgba(255,255,255,.42);}
+
+.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
+.monstre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:start;}
+
+/* CARTE MONSTRE */
+.monstre-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
+.monstre-card:not(.open):hover{background:#202020;}
+.monstre-card.open{cursor:default;border-width:2px;}
+.monstre-card-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
+.m-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;margin-top:1px;color:rgba(255,255,255,.55);}
+.monstre-head-info{flex:1;min-width:0;}
+.monstre-nom{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:2px;}
+.monstre-type{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.55);line-height:1.4;}
+.m-fp-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:1px 7px;flex-shrink:0;align-self:flex-start;white-space:nowrap;color:rgba(255,255,255,.55);}
+.monstre-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:4px;flex-shrink:0;}
+.monstre-card.open .monstre-chevron{transform:rotate(180deg);}
+.monstre-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
+.monstre-card.open .monstre-card-div{display:block;}
+.monstre-card-body{padding:0 14px 12px;display:none;}
+.monstre-card.open .monstre-card-body{display:block;}
+
+.m-mj-section{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);display:none;}
+body.mj-active .m-mj-section{display:block;}
+.m-stats-table{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.m-stat-cell{background:rgba(255,255,255,.05);border-radius:8px;padding:7px 4px;text-align:center;}
+.m-stat-val{font-size:.95rem;font-weight:700;color:#f0f0f0;line-height:1.2;}
+.m-stat-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:2px;}
+.m-fp-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.m-fp-dots{font-size:1.1rem;letter-spacing:2px;color:rgba(255,200,80,.9);}
+.m-fp-label{font-size:.68rem;color:rgba(255,255,255,.45);font-family:'Cinzel',serif;letter-spacing:.08em;}
+.m-section-title{font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin:10px 0 5px;font-family:'Cinzel',serif;}
+.m-action{font-size:.78rem;margin-bottom:5px;line-height:1.45;color:rgba(255,255,255,.75);}
+.m-action strong{color:#f0f0f0;}
+.m-desc{font-size:.82rem;line-height:1.65;color:rgba(255,255,255,.78);font-style:italic;margin:8px 0;}
+.m-detail-row{display:flex;gap:0;margin-bottom:4px;font-size:.78rem;line-height:1.5;}
+.m-detail-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#f0f0f0;min-width:110px;flex-shrink:0;}
+.m-detail-val{color:rgba(255,255,255,.65);font-style:italic;}
+.mj-block{margin-top:8px;border:1.5px solid #c00;border-radius:10px;padding:9px 12px;}
+.mj-block-title{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:6px;}
+.mj-block-txt{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.6;}
+.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
+.m-portrait{width:80px;height:100px;object-fit:cover;border-radius:6px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;margin-right:10px;display:block;}
+.portrait-placeholder{width:80px;height:100px;border:1.5px solid rgba(255,255,255,.15);border-radius:6px;background:#202020;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.portrait-placeholder .p-icon{font-size:1.4rem;color:rgba(255,255,255,.22);margin-bottom:4px;}
+.portrait-placeholder .p-lbl{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25);text-align:center;line-height:1.3;}
+.mj-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(200,0,0,.2);border:1px solid #c00;border-radius:4px;padding:1px 5px;color:#c00;margin-left:6px;vertical-align:middle;}
+
+@media(max-width:640px){.monstre-grid{grid-template-columns:1fr;}.search-input{margin-left:0;width:100%;}}
+</style>
+</head>
+<body>
+
+<div id="mj-guard">
+  <div class="guard-icon">◎</div>
+  <div class="guard-ttl">Mode MJ requis</div>
+  <div class="guard-sub">Activer le mode MJ via le bouton ⚿ dans la navigation.</div>
+</div>
+
+<div class="page-wrap" id="app-wrap" style="display:none;">
+  <div class="filters-bar" id="filters-bar">
+    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
+    <input class="search-input" type="text" id="search-input" placeholder="Rechercher…" oninput="applyFilters()">
+  </div>
+  <div class="grid-wrap">
+    <div class="monstre-grid" id="monstre-grid">
+      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let MONSTRE_DATA = [];
+let currentFilter = 'tous';
+
+function isMjMode() {
+  try { return localStorage.getItem('sw_mj_mode') === 'true'; } catch(e) { return false; }
+}
+
+const TYPE_ICONS = {
+  'humanoïde': '◈', 'mort-vivant': '✝', 'bête': '◉', 'créature magique': '✧',
+  'dragon': '✦', 'fée': '◷', 'fiélon': '⊗', 'construit': '⊟',
+  'aberration': '⊕', 'géant': '⊞', 'élémentaire': '⊛', 'autre': '◎'
+};
+
+async function init() {
+  document.getElementById('app-wrap').style.display = 'block';
+  // Observer toujours actif (CSS show/hide .m-mj-section via body.mj-active)
+  new MutationObserver(() => { if (MONSTRE_DATA.length) { buildFilters(); applyFilters(); } })
+    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  try {
+    MONSTRE_DATA = await loadData('monstres.json');
+    buildFilters();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('monstre-grid').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Erreur chargement : ' + e.message + '</p>';
+  }
+}
+
+function buildFilters() {
+  const types = [...new Set(MONSTRE_DATA.map(m => m.categorie||m.type).filter(Boolean))].sort();
+  const bar = document.getElementById('filters-bar');
+  const search = document.getElementById('search-input');
+  bar.querySelectorAll('.filter-btn:not([data-filter="tous"])').forEach(b => b.remove());
+  types.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filter = t;
+    btn.onclick = () => setFilter(t, btn);
+    btn.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+    bar.insertBefore(btn, search);
+  });
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const mj = isMjMode();
+  // Masquer les monstres avec visible_joueurs:false pour les joueurs
+  let filtered = MONSTRE_DATA.filter(m => mj || m.visible_joueurs !== false);
+  if (currentFilter !== 'tous') filtered = filtered.filter(m => (m.categorie||m.type) === currentFilter);
+  if (q) filtered = filtered.filter(m =>
+    (m.nom||'').toLowerCase().includes(q) ||
+    (m.type||'').toLowerCase().includes(q) ||
+    (m.description||'').toLowerCase().includes(q));
+  renderGrid(filtered);
+}
+
+function renderGrid(monstres) {
+  const grid = document.getElementById('monstre-grid');
+  if (!monstres.length) {
+    grid.innerHTML = '<p class="empty-msg">Aucun monstre correspondant.</p>';
+    return;
+  }
+  grid.innerHTML = monstres.map(buildCard).join('');
+}
+
+function fpDots(fp) {
+  const fpMap = {'0':0,'1/8':0,'1/4':1,'1/2':2,'1':3,'2':4,'3':4,'4':4,'5':4,'6':4,'7':4,'8':4,'9':4,'10':4};
+  const k = String(fp);
+  const nd = fpMap[k] != null ? fpMap[k] : (parseInt(fp) >= 2 ? 4 : 0);
+  return '\u25cf'.repeat(nd) + '\u25cb'.repeat(Math.max(0, 4 - nd));
+}
+function parseVitCase(v) {
+  if (!v) return null;
+  const num = parseFloat(String(v));
+  if (isNaN(num)) return null;
+  return Math.round(num / 1.5) + ' c.';
+}
+function buildCard(m) {
+  const icon = TYPE_ICONS[m.type] || '\u25ce';
+  const fpStr = m.fp != null ? String(m.fp) : '?';
+  const mjBadge = (isMjMode() && m.visible_joueurs === false)
+    ? '<span class="mj-badge">MJ</span>' : '';
+
+  // Portrait + description : visible par tous
+  const portraitBodyHTML = '<div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:8px;">'
+    + (m.portrait_url
+      ? `<img class="m-portrait" src="${m.portrait_url}" alt="${m.nom}" loading="lazy" onerror="this.style.display='none'">`
+      : '<div class="portrait-placeholder"><span class="p-icon">\u25ce</span><span class="p-lbl">Portrait<br>\u00e0 venir</span></div>')
+    + `<div style="flex:1;">${m.description ? '<p class="m-desc" style="margin:0;">' + m.description + '</p>' : ''}</div></div>`;
+
+  // Bloc MJ : stats + actions + immunites etc.
+  const mjSection = (() => {
+    const dots = fpDots(fpStr);
+    const vitCase = parseVitCase(m.vitesse);
+    const statsRow = '<div class="m-stats-table">'
+      + (m.ca ? '<div class="m-stat-cell"><div class="m-stat-val">' + m.ca + '</div><div class="m-stat-lbl">CA</div></div>' : '')
+      + (m.pv ? '<div class="m-stat-cell"><div class="m-stat-val">' + m.pv + '</div><div class="m-stat-lbl">PV</div></div>' : '')
+      + (vitCase ? '<div class="m-stat-cell"><div class="m-stat-val">' + vitCase + '</div><div class="m-stat-lbl">Vitesse</div></div>' : '')
+      + '</div>';
+    const fpRow = '<div class="m-fp-row"><span class="m-fp-dots">' + dots + '</span>'
+      + '<span class="m-fp-label">FP ' + fpStr + '</span></div>';
+    const actionsHTML = (m.actions && m.actions.length)
+      ? '<div class="m-section-title">Actions</div>'
+        + m.actions.map(a => '<div class="m-action"><strong>' + a.nom + '</strong> \u2014 ' + a.description + '</div>').join('')
+      : '';
+    const vulnHTML = (m.vulnerabilites && m.vulnerabilites.length)
+      ? '<div class="m-detail-row"><span class="m-detail-lbl">Vuln\u00e9rabilit\u00e9s</span><span class="m-detail-val">' + (Array.isArray(m.vulnerabilites) ? m.vulnerabilites.join(', ') : m.vulnerabilites) + '</span></div>' : '';
+    const immVal = [m.immunites_degats||'', m.immunites_etats||''].filter(Boolean).join(' / ');
+    const immHTML = immVal ? '<div class="m-detail-row"><span class="m-detail-lbl">Immunit\u00e9s</span><span class="m-detail-val">' + immVal + '</span></div>' : '';
+    const resHTML = (m.resistances && m.resistances.length)
+      ? '<div class="m-detail-row"><span class="m-detail-lbl">R\u00e9sistances</span><span class="m-detail-val">' + (Array.isArray(m.resistances) ? m.resistances.join(', ') : m.resistances) + '</span></div>' : '';
+    const sensHTML = m.sens
+      ? '<div class="m-detail-row"><span class="m-detail-lbl">Sens</span><span class="m-detail-val">' + m.sens + '</span></div>' : '';
+    const langHTML = (m.langues && m.langues.length)
+      ? '<div class="m-detail-row"><span class="m-detail-lbl">Langues</span><span class="m-detail-val">' + (Array.isArray(m.langues) ? m.langues.join(', ') : m.langues) + '</span></div>' : '';
+    const notesHTML = m.notes_mj
+      ? '<div class="mj-block"><div class="mj-block-title">\u26bf Notes MJ</div><div class="mj-block-txt">' + m.notes_mj + '</div></div>' : '';
+    return '<div class="m-mj-section">'
+      + fpRow + statsRow + actionsHTML + vulnHTML + immHTML + resHTML + sensHTML + langHTML + notesHTML
+      + '</div>';
+  })();
+
+  return `
+  <div class="monstre-card" id="card-${m.id}" onclick="toggleCard('${m.id}',event)">
+    <div class="monstre-card-head">
+      <div class="m-icon">${icon}</div>
+      <div class="monstre-head-info">
+        <div class="monstre-nom">${m.nom}${mjBadge}</div>
+        <div class="monstre-type">${m.type||''}${m.taille ? ' \u00b7 '+m.taille : ''}</div>
+      </div>
+      <span class="m-fp-badge">FP ${fpStr}</span>
+      <span class="monstre-chevron">\u25be</span>
+    </div>
+    <div class="monstre-card-div"></div>
+    <div class="monstre-card-body">
+      ${portraitBodyHTML}${mjSection}
+    </div>
+  </div>`;
+}
+function toggleCard(id, event) {
+  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.monstre-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
