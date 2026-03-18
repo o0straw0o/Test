@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relations — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+/* layout */
+.page-wrap{max-width:1160px;margin:0 auto;padding:16px 14px 56px;}
+
+/* toolbar */
+.toolbar{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.tb-search{display:flex;align-items:center;gap:4px;}
+.tb-search input{background:#111;border:1px solid rgba(255,255,255,.2);border-radius:6px;color:#f0f0f0;font-family:'Crimson Text',serif;font-size:.82rem;padding:4px 8px;width:150px;outline:none;transition:border-color .18s;}
+.tb-search input:focus{border-color:rgba(255,255,255,.45);}
+.tb-clear{background:transparent;border:none;color:rgba(255,255,255,.35);cursor:pointer;font-size:.85rem;padding:2px 5px;border-radius:4px;line-height:1;}
+.tb-clear:hover{color:#fff;}
+.tb-sep{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 2px;flex-shrink:0;}
+.tb-space{flex:1;}
+.type-pill{background:transparent;border:1.5px solid;border-radius:20px;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;cursor:pointer;opacity:.35;transition:opacity .18s,background .18s;}
+.type-pill.active{opacity:1;background:rgba(0,0,0,.25);}
+.tb-btn{background:transparent;border:1px solid rgba(255,255,255,.22);border-radius:6px;color:rgba(255,255,255,.6);font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.tb-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.5);color:#fff;}
+
+/* graph area */
+.graph-area{display:flex;gap:10px;align-items:flex-start;}
+.graph-container{flex:1;min-width:0;background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;overflow:hidden;}
+.graph-header{border-bottom:1px solid rgba(255,255,255,.07);padding:10px 18px;display:flex;align-items:center;gap:10px;}
+.graph-title{font-family:'Cinzel',serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;}
+.graph-hint{font-size:.75rem;font-style:italic;color:rgba(255,255,255,.5);margin-left:auto;}
+#network{width:100%;height:520px;}
+.mj-notice{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:#c00;font-style:italic;display:flex;align-items:center;gap:5px;}
+
+/* side panel */
+.side-panel{width:270px;flex-shrink:0;background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:16px;display:none;}
+.side-panel.visible{display:block;}
+.sp-portrait{width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:#252525;display:block;}
+.sp-name{font-family:'Cinzel',serif;font-size:.82rem;font-weight:700;letter-spacing:.08em;margin-bottom:5px;line-height:1.2;}
+.sp-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.sp-badge{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:10px;border:1px solid;}
+.sp-badge.pj{border-color:rgba(255,255,255,.6);color:rgba(255,255,255,.8);}
+.sp-badge.pnj{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.5);}
+.sp-role{font-size:.78rem;color:rgba(255,255,255,.6);font-style:italic;margin-bottom:8px;line-height:1.35;}
+.sp-desc{font-size:.75rem;color:rgba(255,255,255,.5);line-height:1.4;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.sp-section-title{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.32);border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:3px;margin-bottom:6px;}
+.sp-rels{list-style:none;margin-bottom:10px;}
+.sp-rels li{display:flex;align-items:flex-start;gap:6px;font-size:.75rem;padding:3px 4px;cursor:pointer;border-radius:4px;transition:background .15s;line-height:1.35;}
+.sp-rels li:hover{background:rgba(255,255,255,.05);}
+.sp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.sp-actions{display:flex;flex-direction:column;gap:5px;}
+.sp-btn{background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:6px;color:rgba(255,255,255,.55);font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;cursor:pointer;text-align:left;transition:all .15s;text-decoration:none;display:block;width:100%;}
+.sp-btn:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.4);color:#fff;}
+.sp-btn.isolated{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.45);color:#fff;}
+
+/* legend */
+.legend{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:14px 18px;margin-top:10px;}
+.legend-title{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:4px;}
+.legend-grid{display:flex;flex-wrap:wrap;gap:8px 20px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:.78rem;cursor:pointer;transition:opacity .18s;border-radius:4px;padding:2px 4px;user-select:none;}
+.legend-item:hover{background:rgba(255,255,255,.05);}
+.legend-item.off{opacity:.3;}
+.legend-line{width:28px;height:3px;border-radius:2px;}
+.legend-dot{width:12px;height:6px;border-radius:2px;border:1.5px solid rgba(255,255,255,.2);}
+.legend-dot.pj{background:#252525;border-color:rgba(255,255,255,.75);}
+.legend-dot.pnj{background:#1a1a1a;border-color:rgba(255,255,255,.2);}
+.legend-sep{width:1px;height:20px;background:#252525;margin:0 4px;}
+
+/* responsive */
+@media(max-width:720px){
+  .graph-area{flex-direction:column;}
+  .side-panel{width:100%;}
+  .tb-search input{width:110px;}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="tb-search">
+      <input type="text" id="tb-search" placeholder="Rechercher…" autocomplete="off">
+      <button class="tb-clear" id="tb-search-clear" title="Effacer">✕</button>
+    </div>
+    <span class="tb-sep"></span>
+    <button class="type-pill active" data-type="alli&#233;" style="color:#3a7a2a;border-color:#3a7a2a;">Allié</button>
+    <button class="type-pill active" data-type="ennemi" style="color:#cc3333;border-color:#cc0000;">Ennemi</button>
+    <button class="type-pill active" data-type="hi&#233;rarchie" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.4);">Hiérarchie</button>
+    <button class="type-pill active" data-type="famille" style="color:#8a5ace;border-color:#6a3aaa;">Famille</button>
+    <button class="type-pill active" data-type="m&#233;fiance" style="color:#c66000;border-color:#c66000;">Méfiance</button>
+    <button class="type-pill active" data-type="neutre" style="color:#999;border-color:#666;">Neutre</button>
+    <span class="tb-space"></span>
+    <button class="tb-btn" id="btn-save-pos">&#128204; Positions</button>
+    <button class="tb-btn" id="btn-reset-pos">&#8635; Reset</button>
+    <span class="tb-sep"></span>
+    <button class="tb-btn" id="btn-export">&#11015; PNG</button>
+  </div>
+
+  <!-- Graph + Side panel -->
+  <div class="graph-area">
+    <div class="graph-container">
+      <div class="graph-header">
+        <span class="graph-title">Graphe des relations</span>
+        <span class="graph-hint">Cliquer-glisser · Molette · Clic nœud → détails</span>
+        <span class="mj-only mj-notice">&#9919; Relations secrètes visibles</span>
+      </div>
+      <div id="network"></div>
+    </div>
+    <div class="side-panel" id="side-panel">
+      <img class="sp-portrait" id="sp-portrait" src="" alt="" style="display:none">
+      <div class="sp-name" id="sp-name"></div>
+      <div class="sp-badges" id="sp-badges"></div>
+      <div class="sp-role" id="sp-role"></div>
+      <div class="sp-desc" id="sp-desc"></div>
+      <div class="sp-section-title">Relations directes</div>
+      <ul class="sp-rels" id="sp-rels"></ul>
+      <div class="sp-actions" id="sp-actions"></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-title">Légende</div>
+    <div class="legend-grid" id="legend-grid">
+      <div class="legend-item" title="Aventurier (joueur)"><div class="legend-dot pj"></div><span>Aventurier</span></div>
+      <div class="legend-item" title="PNJ"><div class="legend-dot pnj"></div><span>PNJ</span></div>
+      <div class="legend-sep"></div>
+      <div class="legend-item" data-type="alli&#233;"><div class="legend-line" style="background:#3a7a2a;"></div><span>Allié</span></div>
+      <div class="legend-item" data-type="ennemi"><div class="legend-line" style="background:#cc0000;"></div><span>Ennemi</span></div>
+      <div class="legend-item" data-type="hi&#233;rarchie"><div class="legend-line" style="background:rgba(255,255,255,.55);"></div><span>Hiérarchie</span></div>
+      <div class="legend-item" data-type="famille"><div class="legend-line" style="background:#6a3aaa;"></div><span>Famille</span></div>
+      <div class="legend-item" data-type="m&#233;fiance"><div class="legend-line" style="background:#c66000;"></div><span>Méfiance</span></div>
+      <div class="legend-item" data-type="neutre"><div class="legend-line" style="background:#888;"></div><span>Neutre</span></div>
+      <div class="legend-sep"></div>
+      <div class="legend-item mj-only"><div class="legend-line" style="background:transparent;border-top:2px dashed #c00;height:0;width:28px;"></div><span style="color:#c00;">secret MJ</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+// ── Couleurs par type de relation ──────────────────────────────────────────
+var TYPE_COLORS = {};
+TYPE_COLORS['alli\u00e9']      = '#3a7a2a';
+TYPE_COLORS['ennemi']          = '#cc0000';
+TYPE_COLORS['hi\u00e9rarchie'] = 'rgba(255,255,255,.55)';
+TYPE_COLORS['famille']         = '#6a3aaa';
+TYPE_COLORS['m\u00e9fiance']   = '#c66000';
+TYPE_COLORS['neutre']          = '#888888';
+
+var FACTION_COLORS = {
+  'Brigade':      '#4a6aaa',
+  'Aventuriers':  'rgba(255,255,255,.75)',
+  'Commercants':  '#aa8a2a',
+  'Independants': '#6aaa7a'
+};
+
+// ── État global ────────────────────────────────────────────────────────────
+var network       = null;
+var allRelations  = [];
+var actorMap      = {};
+var hiddenTypes   = {};   // type -> bool
+var isolatedNodeId = null;
+var searchTerm    = '';
+var currentPanelId = null;
+
+// ── Construction de la map des acteurs ────────────────────────────────────
+function buildActorMap(pnjs, personnages) {
+  var map = {};
+
+  for (var i = 0; i < personnages.length; i++) {
+    var pj = personnages[i];
+    map[pj.id] = {
+      nom:         pj.nom || pj.id,
+      type:        'pj',
+      role:        (pj.classe || '') + (pj.niveau ? ' niv.' + pj.niveau : ''),
+      description: pj.traits ? pj.traits.join(', ') : (pj.motivations || ''),
+      portrait:    pj.portrait_url || '',
+      faction:     'Aventuriers'
+    };
+  }
+
+  for (var j = 0; j < pnjs.length; j++) {
+    var pnj = pnjs[j];
+    var actor = {
+      nom:         pnj.nom || pnj.id,
+      type:        'pnj',
+      role:        pnj.role || '',
+      description: pnj.description || '',
+      portrait:    pnj.portrait_url || '',
+      faction:     pnj.faction || ''
+    };
+    map[pnj.id] = actor;
+    // Alias pnj_{prenom} pour IDs non normalisés (ex: "Edward" -> "pnj_edward")
+    var lid = pnj.id.toLowerCase();
+    if (lid.indexOf('pnj_') !== 0) {
+      map['pnj_' + lid] = actor;
+    }
+  }
+
+  return map;
+}
+
+function getActorName(id) {
+  if (actorMap[id] && actorMap[id].nom) return actorMap[id].nom;
+  return id.replace('pnj_', '').replace('pj_0', 'PJ ');
+}
+
+// ── Props d'un nœud (couleurs selon type/faction/état) ───────────────────
+function nodeProps(id, dimmed) {
+  var actor = actorMap[id];
+  var isPJ  = actor && actor.type === 'pj';
+  var faction = actor && actor.faction;
+  var borderColor = (faction && FACTION_COLORS[faction])
+    ? FACTION_COLORS[faction]
+    : (isPJ ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.2)');
+
+  return {
+    color: {
+      background: dimmed ? '#141414' : (isPJ ? '#252525' : '#1a1a1a'),
+      border: dimmed ? 'rgba(255,255,255,.08)' : borderColor,
+      highlight: {
+        background: isPJ ? '#2e2e2e' : '#222',
+        border:     isPJ ? '#fff' : 'rgba(255,255,255,.5)'
+      },
+      hover: {
+        background: isPJ ? '#2a2a2a' : '#202020',
+        border:     dimmed ? 'rgba(255,255,255,.15)' : borderColor
+      }
+    },
+    font: {
+      face:  'Cinzel',
+      size:  11,
+      color: dimmed ? 'rgba(255,255,255,.15)' : (isPJ ? '#fff' : 'rgba(255,255,255,.75)'),
+      bold:  isPJ && !dimmed
+    },
+    borderWidth: isPJ ? 2 : 1.5
+  };
+}
+
+// ── Construction du graphe ────────────────────────────────────────────────
+function buildGraph(savedPositions) {
+  var isMJ = getMJMode();
+  var nodeSet = {};
+
+  for (var k = 0; k < allRelations.length; k++) {
+    var r = allRelations[k];
+    if (r.secret && !isMJ) continue;
+    nodeSet[r.source] = true;
+    nodeSet[r.cible]  = true;
+  }
+
+  var nodeIds = Object.keys(nodeSet);
+  var nodes   = [];
+  for (var n = 0; n < nodeIds.length; n++) {
+    var id    = nodeIds[n];
+    var props = nodeProps(id, false);
+    var node  = {
+      id:    id,
+      label: getActorName(id),
+      shape: 'box',
+      margin: 8,
+      shapeProperties: { borderRadius: 6 }
+    };
+    // merge props
+    node.color       = props.color;
+    node.font        = props.font;
+    node.borderWidth = props.borderWidth;
+    if (savedPositions && savedPositions[id]) {
+      node.x = savedPositions[id].x;
+      node.y = savedPositions[id].y;
+    }
+    nodes.push(node);
+  }
+
+  var edges = [];
+  for (var e = 0; e < allRelations.length; e++) {
+    var rel = allRelations[e];
+    if (rel.secret && !isMJ) continue;
+    var typeColor = TYPE_COLORS[rel.type] || '#888';
+    var tooltipEl = document.createElement('div');
+    tooltipEl.style.cssText = 'font-family:serif;font-size:12px;color:#111;background:#e8e0d0;padding:4px 9px;border-radius:4px;max-width:220px;';
+    tooltipEl.textContent = rel.label;
+    if (rel.secret) {
+      var sm = document.createElement('em');
+      sm.style.color = '#900';
+      sm.textContent = ' [secret]';
+      tooltipEl.appendChild(sm);
+    }
+    edges.push({
+      id:     e,
+      from:   rel.source,
+      to:     rel.cible,
+      label:  rel.label,
+      title:  tooltipEl,
+      color:  { color: typeColor, opacity: rel.secret ? 0.5 : 1 },
+      dashes: rel.secret ? [6, 4] : false,
+      arrows: { to: { enabled: true, scaleFactor: 0.6 } },
+      font:   { size: 9, face: 'Crimson Text', color: 'rgba(255,255,255,.7)',
+                align: 'middle', strokeWidth: 3, strokeColor: '#111' },
+      width:  rel.secret ? 1.2 : 1.8,
+      smooth: { type: 'curvedCW', roundness: 0.15 },
+      _type:  rel.type,
+      _secret: rel.secret || false
+    });
+  }
+
+  var container = document.getElementById('network');
+  var visNodes  = new vis.DataSet(nodes);
+  var visEdges  = new vis.DataSet(edges);
+  var options   = {
+    physics: {
+      enabled: !savedPositions,
+      stabilization: { iterations: 200 },
+      barnesHut: { gravitationalConstant: -4000, centralGravity: 0.3,
+                   springLength: 140, damping: 0.15 }
+    },
+    interaction: { hover: true, tooltipDelay: 200, navigationButtons: false },
+    layout:  { improvedLayout: !savedPositions },
+    nodes:   { chosen: true },
+    edges:   { chosen: true }
+  };
+
+  if (network) network.destroy();
+  network = new vis.Network(container, { nodes: visNodes, edges: visEdges }, options);
+
+  network.on('click', function(params) {
+    if (params.nodes.length > 0) {
+      showNodePanel(params.nodes[0]);
+    } else {
+      clearNodePanel();
+    }
+  });
+
+  network.on('doubleClick', function(params) {
+    if (params.nodes.length === 0) clearNodePanel();
+  });
+
+  applyFilters();
+}
+
+// ── Filtres ───────────────────────────────────────────────────────────────
+function applyFilters() {
+  if (!network) return;
+  var isMJ = getMJMode();
+  var allNodeIds = network.body.data.nodes.getIds();
+  var allEdgeIds = network.body.data.edges.getIds();
+
+  // Nœuds connectés au nœud isolé
+  var connectedSet = {};
+  if (isolatedNodeId) {
+    connectedSet[isolatedNodeId] = true;
+    for (var k = 0; k < allRelations.length; k++) {
+      var r = allRelations[k];
+      if (r.secret && !isMJ) continue;
+      if (r.source === isolatedNodeId) connectedSet[r.cible]  = true;
+      if (r.cible  === isolatedNodeId) connectedSet[r.source] = true;
+    }
+  }
+
+  // Mise à jour nœuds
+  var nodeUpdates = [];
+  for (var n = 0; n < allNodeIds.length; n++) {
+    var id     = allNodeIds[n];
+    var actor  = actorMap[id] || {};
+    var name   = (actor.nom || id).toLowerCase();
+    var inSrch = !searchTerm || name.indexOf(searchTerm.toLowerCase()) >= 0;
+    var inIso  = !isolatedNodeId || connectedSet[id];
+    var dimmed = !inSrch || !inIso;
+    var props  = nodeProps(id, dimmed);
+    nodeUpdates.push({ id: id, color: props.color, font: props.font, borderWidth: props.borderWidth });
+  }
+  network.body.data.nodes.update(nodeUpdates);
+
+  // Mise à jour arêtes
+  var edgeUpdates = [];
+  for (var e = 0; e < allEdgeIds.length; e++) {
+    var edge   = network.body.data.edges.get(allEdgeIds[e]);
+    var type   = edge._type;
+    var typeHidden = hiddenTypes[type] === true;
+    var isoHidden  = isolatedNodeId
+      ? !(connectedSet[edge.from] && connectedSet[edge.to])
+      : false;
+    edgeUpdates.push({
+      id:     allEdgeIds[e],
+      hidden: typeHidden || isoHidden,
+      color:  { color: TYPE_COLORS[type] || '#888',
+                opacity: edge._secret ? 0.5 : 1 }
+    });
+  }
+  network.body.data.edges.update(edgeUpdates);
+}
+
+// ── Panneau latéral ───────────────────────────────────────────────────────
+function showNodePanel(nodeId) {
+  currentPanelId = nodeId;
+  var actor = actorMap[nodeId] || {};
+  var isMJ  = getMJMode();
+  var panel = document.getElementById('side-panel');
+
+  // Portrait
+  var img = document.getElementById('sp-portrait');
+  if (actor.portrait) {
+    img.src = actor.portrait;
+    img.style.display = 'block';
+    img.onerror = function() { this.style.display = 'none'; };
+  } else {
+    img.style.display = 'none';
+  }
+
+  document.getElementById('sp-name').textContent = actor.nom || nodeId;
+
+  // Badges
+  var badges = document.getElementById('sp-badges');
+  badges.innerHTML = '';
+  var b1 = document.createElement('span');
+  b1.className = 'sp-badge ' + (actor.type === 'pj' ? 'pj' : 'pnj');
+  b1.textContent = actor.type === 'pj' ? 'Aventurier' : 'PNJ';
+  badges.appendChild(b1);
+  if (actor.faction) {
+    var b2 = document.createElement('span');
+    b2.className = 'sp-badge pnj';
+    b2.textContent = actor.faction;
+    var fc = FACTION_COLORS[actor.faction];
+    if (fc) { b2.style.borderColor = fc; b2.style.color = fc; }
+    badges.appendChild(b2);
+  }
+
+  document.getElementById('sp-role').textContent = actor.role || '';
+  document.getElementById('sp-desc').textContent = actor.description || '';
+
+  // Relations directes
+  var relsList = document.getElementById('sp-rels');
+  relsList.innerHTML = '';
+  for (var k = 0; k < allRelations.length; k++) {
+    var r = allRelations[k];
+    if (r.secret && !isMJ) continue;
+    var otherId = null, arrow = '';
+    if (r.source === nodeId) { otherId = r.cible;  arrow = '\u2192 '; }
+    if (r.cible  === nodeId) { otherId = r.source; arrow = '\u2190 '; }
+    if (!otherId) continue;
+    var li   = document.createElement('li');
+    var dot  = document.createElement('span');
+    dot.className = 'sp-dot';
+    dot.style.background = TYPE_COLORS[r.type] || '#888';
+    var txt = document.createElement('span');
+    txt.textContent = arrow + getActorName(otherId) + ' \u2014 ' + r.label;
+    li.appendChild(dot);
+    li.appendChild(txt);
+    (function(oid) {
+      li.addEventListener('click', function() { focusNode(oid); });
+    })(otherId);
+    relsList.appendChild(li);
+  }
+
+  // Boutons d'action
+  var actions = document.getElementById('sp-actions');
+  actions.innerHTML = '';
+
+  var isolateBtn = document.createElement('button');
+  var isIsolated = isolatedNodeId === nodeId;
+  isolateBtn.className = 'sp-btn' + (isIsolated ? ' isolated' : '');
+  isolateBtn.textContent = isIsolated ? '\u00d7 Annuler l\'isolation' : '\ud83d\udd0d Isoler ce personnage';
+  (function(nid) {
+    isolateBtn.addEventListener('click', function() {
+      isolatedNodeId = (isolatedNodeId === nid) ? null : nid;
+      applyFilters();
+      showNodePanel(nid);
+    });
+  })(nodeId);
+  actions.appendChild(isolateBtn);
+
+  panel.classList.add('visible');
+}
+
+function clearNodePanel() {
+  document.getElementById('side-panel').classList.remove('visible');
+  currentPanelId = null;
+}
+
+function focusNode(nodeId) {
+  if (network) {
+    network.focus(nodeId, {
+      scale: 1.2,
+      animation: { duration: 400, easingFunction: 'easeInOutQuad' }
+    });
+    network.selectNodes([nodeId]);
+  }
+  showNodePanel(nodeId);
+}
+
+// ── Toggle type (pill + légende) ──────────────────────────────────────────
+function toggleType(type) {
+  hiddenTypes[type] = !hiddenTypes[type];
+  var active = !hiddenTypes[type];
+  // Pills
+  var pills = document.querySelectorAll('.type-pill');
+  for (var i = 0; i < pills.length; i++) {
+    if (pills[i].dataset.type === type) {
+      pills[i].classList.toggle('active', active);
+    }
+  }
+  // Légende
+  var items = document.querySelectorAll('.legend-item[data-type]');
+  for (var j = 0; j < items.length; j++) {
+    if (items[j].dataset.type === type) {
+      items[j].classList.toggle('off', !active);
+    }
+  }
+  applyFilters();
+}
+
+// ── Sauvegarde positions ──────────────────────────────────────────────────
+function savePositions() {
+  if (!network) return;
+  var positions = network.getPositions();
+  var key = 'sw_rel_pos_' + getCampaignId();
+  localStorage.setItem(key, JSON.stringify(positions));
+  network.setOptions({ physics: { enabled: false } });
+  var btn = document.getElementById('btn-save-pos');
+  btn.textContent = '\u2705 Sauvegard\u00e9';
+  setTimeout(function() { btn.textContent = '\ud83d\udccc Positions'; }, 2000);
+}
+
+function resetPositions() {
+  var key = 'sw_rel_pos_' + getCampaignId();
+  localStorage.removeItem(key);
+  isolatedNodeId = null;
+  searchTerm = '';
+  document.getElementById('tb-search').value = '';
+  buildGraph(null);
+  clearNodePanel();
+}
+
+function getSavedPositions() {
+  var key = 'sw_rel_pos_' + getCampaignId();
+  var s = localStorage.getItem(key);
+  if (!s) return null;
+  try { return JSON.parse(s); } catch(e) { return null; }
+}
+
+// ── Export PNG ────────────────────────────────────────────────────────────
+function exportPNG() {
+  if (!network) return;
+  var src = network.canvas.frame.canvas;
+  var tmp = document.createElement('canvas');
+  tmp.width  = src.width;
+  tmp.height = src.height;
+  var ctx = tmp.getContext('2d');
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, tmp.width, tmp.height);
+  ctx.drawImage(src, 0, 0);
+  var a = document.createElement('a');
+  var d = new Date().toISOString().slice(0, 10);
+  a.download = 'relations_' + d + '.png';
+  a.href = tmp.toDataURL('image/png');
+  a.click();
+}
+
+// ── Chargement initial ────────────────────────────────────────────────────
+async function init() {
+  try {
+    var results = await Promise.all([
+      loadData('relations.json'),
+      loadData('pnjs.json').catch(function() { return []; }),
+      loadData('personnages.json').catch(function() { return []; })
+    ]);
+    allRelations = results[0];
+    actorMap     = buildActorMap(results[1], results[2]);
+    var saved    = getSavedPositions();
+    buildGraph(saved);
+  } catch(e) {
+    document.getElementById('network').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;text-align:center;padding:40px;">'
+      + '&#9888; Donn\u00e9es inaccessibles en file://. Utiliser un serveur local.'
+      + '</p>';
+  }
+}
+
+// ── Réactivité mode MJ ────────────────────────────────────────────────────
+document.addEventListener('larme-mj-change', function() {
+  var saved = getSavedPositions();
+  buildGraph(saved);
+  if (currentPanelId) showNodePanel(currentPanelId);
+});
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'sw_mj_mode') {
+    var saved = getSavedPositions();
+    buildGraph(saved);
+    if (currentPanelId) showNodePanel(currentPanelId);
+  }
+});
+
+// ── DOMContentLoaded ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  init();
+
+  // Recherche
+  document.getElementById('tb-search').addEventListener('input', function(e) {
+    searchTerm = e.target.value.trim();
+    applyFilters();
+  });
+  document.getElementById('tb-search-clear').addEventListener('click', function() {
+    document.getElementById('tb-search').value = '';
+    searchTerm = '';
+    applyFilters();
+  });
+
+  // Pills types
+  var pills = document.querySelectorAll('.type-pill');
+  for (var i = 0; i < pills.length; i++) {
+    (function(pill) {
+      pill.addEventListener('click', function() { toggleType(pill.dataset.type); });
+    })(pills[i]);
+  }
+
+  // Légende cliquable
+  var legendItems = document.querySelectorAll('.legend-item[data-type]');
+  for (var j = 0; j < legendItems.length; j++) {
+    (function(item) {
+      item.addEventListener('click', function() { toggleType(item.dataset.type); });
+    })(legendItems[j]);
+  }
+
+  // Boutons toolbar
+  document.getElementById('btn-save-pos').addEventListener('click', savePositions);
+  document.getElementById('btn-reset-pos').addEventListener('click', resetPositions);
+  document.getElementById('btn-export').addEventListener('click', exportPNG);
+
+  // Patch bouton MJ (rebuild si toggle)
+  document.addEventListener('click', function(e) {
+    if (e.target && (e.target.id === 'btn-mode-mj' || e.target.id === 'btn-mode-joueur')) {
+      setTimeout(function() {
+        var saved = getSavedPositions();
+        buildGraph(saved);
+        if (currentPanelId) showNodePanel(currentPanelId);
+      }, 80);
+    }
+  });
+});
+</script>
+</body>
+</html>
