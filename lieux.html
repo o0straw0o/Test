@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lieux — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
+.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
+.filter-btn:hover{background:#333;color:#f0f0f0;}
+.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
+.search-input{padding:5px 12px;background:#252525;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;font-family:'Crimson Text',serif;font-size:.85rem;font-style:italic;color:#f0f0f0;outline:none;transition:border-color .15s;margin-left:auto;}
+.search-input::placeholder{color:rgba(255,255,255,.42);}
+.search-input:focus{border-color:rgba(255,255,255,.2);}
+.count-line{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:10px;}
+
+.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
+.lieux-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;align-items:start;}
+
+.lieu-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
+.lieu-card:not(.open):hover{background:#202020;}
+.lieu-card.open{cursor:default;border-width:2px;}
+.lieu-card-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
+.lieu-type-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;margin-top:1px;}
+.lieu-head-info{flex:1;min-width:0;}
+.lieu-nom{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:2px;}
+.lieu-region{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.55);line-height:1.4;}
+.lieu-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.15);border-radius:20px;padding:1px 7px;flex-shrink:0;align-self:flex-start;white-space:nowrap;}
+.lieu-badge.visite{border-color:#3a7a2a;color:#3a7a2a;}
+.lieu-badge.connu{border-color:rgba(255,255,255,.42);color:rgba(255,255,255,.42);}
+.lieu-badge.inexplore{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.3);}
+.lieu-badge.inconnu{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.25);}
+.lieu-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:4px;flex-shrink:0;}
+.lieu-card.open .lieu-chevron{transform:rotate(180deg);}
+.lieu-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
+.lieu-card.open .lieu-card-div{display:block;}
+.lieu-card-body{padding:0 14px 12px;display:none;}
+.lieu-card.open .lieu-card-body{display:block;}
+.lieu-desc{font-size:.82rem;line-height:1.65;color:rgba(255,255,255,.78);font-style:italic;margin:10px 0 8px;}
+.lieu-detail-row{display:flex;gap:0;margin-bottom:4px;font-size:.78rem;line-height:1.5;}
+.lieu-detail-row:last-child{margin-bottom:0;}
+.lieu-detail-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#f0f0f0;min-width:100px;flex-shrink:0;}
+.lieu-detail-val{color:rgba(255,255,255,.65);font-style:italic;}
+.chip-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px;}
+.chip{font-size:.72rem;font-style:italic;color:rgba(255,255,255,.65);padding:1px 7px;border:1px solid rgba(255,255,255,.12);border-radius:8px;}
+.mj-block{margin-top:8px;border:1.5px solid #c00;border-radius:10px;padding:9px 12px;}
+.mj-block-title{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:6px;}
+.mj-block-txt{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.6;}
+.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
+
+@media(max-width:640px){.lieux-grid{grid-template-columns:1fr;}.search-input{margin-left:0;width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="filters-bar">
+    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
+    <button class="filter-btn" data-filter="visité" onclick="setFilter('visité',this)">Visités</button>
+    <button class="filter-btn" data-filter="connu" onclick="setFilter('connu',this)">Connus</button>
+    <button class="filter-btn mj-only" data-filter="inexploré" id="btn-inexplore" onclick="setFilter('inexploré',this)">Inexplorés</button>
+    <input class="search-input" type="text" id="search-input" placeholder="Rechercher un lieu…" oninput="applyFilters()">
+  </div>
+  <div class="count-line" id="count-line"></div>
+  <div class="grid-wrap">
+    <div class="lieux-grid" id="lieux-grid">
+      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let LIEUX_DATA = [];
+let LIEUX_MAP = {};
+let currentFilter = 'tous';
+const TYPE_ICONS = {village:'⌂',ville:'🏰',autre:'◈'};
+const STATUT_LABELS = {'visité':'Visité','connu':'Connu','inexploré':'Inexploré','inconnu':'Inconnu'};
+// Statuts masqués en mode joueur
+const STATUTS_MJ_ONLY = ['inexploré', 'inconnu'];
+
+async function init() {
+  try {
+    LIEUX_DATA = await loadData('lieux.json');
+    LIEUX_MAP = Object.fromEntries(LIEUX_DATA.map(l => [l.id, l]));
+    applyFilters();
+  } catch(e) {
+    document.getElementById('lieux-grid').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Données inaccessibles en file://. Utiliser un serveur local.</p>';
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const isMJ = getMJMode();
+  let filtered = getMJMode() ? LIEUX_DATA : LIEUX_DATA.filter(l => l.visible_joueurs !== false);
+  // En mode joueur : masquer inexploré et inconnu
+  if (!isMJ) {
+    filtered = filtered.filter(l => !STATUTS_MJ_ONLY.includes(l.statut));
+    // Si filtre actuel interdit, revenir sur "tous"
+    if (STATUTS_MJ_ONLY.includes(currentFilter)) {
+      currentFilter = 'tous';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === 'tous'));
+    }
+  }
+  if (currentFilter !== 'tous') filtered = filtered.filter(l => l.statut === currentFilter);
+  if (q) filtered = filtered.filter(l =>
+    l.nom.toLowerCase().includes(q) || l.region.toLowerCase().includes(q) || (l.description||'').toLowerCase().includes(q));
+  renderGrid(filtered);
+  const total = LIEUX_DATA.length;
+  document.getElementById('count-line').textContent = filtered.length === total ? `${total} lieux` : `${filtered.length} / ${total} lieux`;
+}
+
+function renderGrid(lieux) {
+  const grid = document.getElementById('lieux-grid');
+  if (!lieux.length) { grid.innerHTML = '<p class="empty-msg">Aucun lieu correspondant.</p>'; return; }
+  grid.innerHTML = lieux.map(buildCard).join('');
+  applyMJMode(getMJMode());
+}
+
+function buildCard(lieu) {
+  const icon = TYPE_ICONS[lieu.type] || '◈';
+  const statutLbl = STATUT_LABELS[lieu.statut] || lieu.statut;
+  const statutCls = lieu.statut === 'visité' ? 'visite' : lieu.statut === 'inexploré' ? 'inexplore' : lieu.statut === 'inconnu' ? 'inconnu' : 'connu';
+
+  let sousLieuxHTML = '';
+  if (lieu.sous_lieux && lieu.sous_lieux.length) {
+    const chips = lieu.sous_lieux.map(id => { const sl = LIEUX_MAP[id]; return sl ? `<span class="chip">${sl.nom}</span>` : ''; }).join('');
+    sousLieuxHTML = `<div class="lieu-detail-row"><span class="lieu-detail-lbl">Sous-lieux</span><div class="chip-list">${chips}</div></div>`;
+  }
+
+  let pnjsHTML = '';
+  if (lieu.pnjs_presents && lieu.pnjs_presents.length) {
+    const chips = lieu.pnjs_presents.map(id => `<span class="chip">${id.replace('pnj_','')}</span>`).join('');
+    pnjsHTML = `<div class="lieu-detail-row"><span class="lieu-detail-lbl">PNJs présents</span><div class="chip-list">${chips}</div></div>`;
+  }
+
+  let evtsHTML = '';
+  if (lieu.evenements && lieu.evenements.length) {
+    evtsHTML = `<div class="lieu-detail-row"><span class="lieu-detail-lbl">Événements</span><span class="lieu-detail-val">${lieu.evenements.map(e=>e.replace('evt_','Évt.')).join(', ')}</span></div>`;
+  }
+
+  const hasDetails = sousLieuxHTML || pnjsHTML || evtsHTML;
+  const mjHTML = lieu.notes_mj ? `
+    <div class="mj-only">
+      <div style="height:1px;background:#2a2a2a;margin:8px 0;"></div>
+      <div class="mj-block"><div class="mj-block-title">⚿ Notes MJ</div><div class="mj-block-txt">${lieu.notes_mj}</div></div>
+    </div>` : '';
+
+  return `
+  <div class="lieu-card" id="lieu-${lieu.id}" onclick="toggleCard('${lieu.id}',event)">
+    <div class="lieu-card-head">
+      <div class="lieu-type-icon">${icon}</div>
+      <div class="lieu-head-info">
+        <div class="lieu-nom">${lieu.nom}</div>
+        <div class="lieu-region">${lieu.region}</div>
+      </div>
+      <span class="lieu-badge ${statutCls}">${statutLbl}</span>
+      <span class="lieu-chevron">▾</span>
+    </div>
+    <div class="lieu-card-div"></div>
+    <div class="lieu-card-body">
+      ${lieu.description ? `<p class="lieu-desc">${lieu.description}</p>` : ''}
+      ${hasDetails ? `<div style="border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 12px;background:#202020;">${sousLieuxHTML}${pnjsHTML}${evtsHTML}</div>` : ''}
+      ${mjHTML}
+    </div>
+  </div>`;
+}
+
+function toggleCard(id, event) {
+  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
+  const card = document.getElementById('lieu-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.lieu-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+  applyMJMode(getMJMode());
+}
+
+// Patch : quand le mode MJ change, relancer applyFilters pour masquer/afficher inexploré+inconnu
+(function() {
+  const orig = window.setMJMode;
+  window.setMJMode = function(val) {
+    orig(val);
+    if (LIEUX_DATA && LIEUX_DATA.length) applyFilters();
+  };
+})();
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
