@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNJs — La Larme d'Argent</title>
+<!-- Portraits PNJ : placeholders parchemin dans les cartes -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+
+/* ── FILTERS ── */
+.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
+.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
+.filter-btn:hover{background:#333;color:#f0f0f0;}
+.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
+.search-input{padding:5px 12px;background:#252525;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;font-family:'Crimson Text',serif;font-size:.85rem;font-style:italic;color:#f0f0f0;outline:none;transition:border-color .15s;margin-left:auto;}
+.search-input::placeholder{color:rgba(255,255,255,.42);}
+.search-input:focus{border-color:rgba(255,255,255,.2);}
+
+/* ── GRID CONTAINER (fausse bordure du bas de la rangée de filtres) ── */
+.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
+
+/* ── GRILLE PNJ ── */
+.pnj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;align-items:start;}
+
+/* ── CARTE PNJ ── */
+.pnj-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
+.pnj-card:not(.open):hover{background:#202020;}
+.pnj-card.open{cursor:default;border-width:2px;}
+.pnj-card-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
+.pnj-status{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;margin-top:1px;}
+.pnj-status.mort{border-color:#c00;color:#c00;}
+.pnj-status.disparu{border-color:rgba(255,255,255,.42);color:rgba(255,255,255,.42);}
+.pnj-status.inconnu{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.3);}
+.pnj-head-info{flex:1;min-width:0;}
+.pnj-nom{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:2px;}
+.pnj-role{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.55);line-height:1.4;}
+.pnj-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.15);border-radius:20px;padding:1px 7px;flex-shrink:0;align-self:flex-start;white-space:nowrap;}
+.pnj-badge.vivant{border-color:#3a7a2a;color:#3a7a2a;}
+.pnj-badge.mort{border-color:#c00;color:#c00;}
+.pnj-badge.disparu{border-color:rgba(255,255,255,.42);color:rgba(255,255,255,.42);}
+.pnj-badge.inconnu{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.3);}
+.pnj-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:4px;flex-shrink:0;}
+.pnj-card.open .pnj-chevron{transform:rotate(180deg);}
+
+.pnj-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
+.pnj-card.open .pnj-card-div{display:block;}
+.pnj-card-body{padding:0 14px 12px;display:none;}
+.pnj-card.open .pnj-card-body{display:block;}
+
+.pnj-desc{font-size:.82rem;line-height:1.65;color:rgba(255,255,255,.78);font-style:italic;margin:10px 0 8px;}
+.pnj-detail-row{display:flex;gap:0;margin-bottom:4px;font-size:.78rem;line-height:1.5;}
+.pnj-detail-row:last-child{margin-bottom:0;}
+.pnj-detail-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#f0f0f0;min-width:100px;flex-shrink:0;}
+.pnj-detail-val{color:rgba(255,255,255,.65);font-style:italic;}
+.pnj-stats{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0;}
+.pnj-stat-chip{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:rgba(255,255,255,.65);}
+.pnj-stat-chip strong{color:#f0f0f0;}
+.phrase-cle{margin:8px 0;padding:8px 12px;border-left:2px solid rgba(255,255,255,.2);font-style:italic;font-size:.82rem;color:rgba(255,255,255,.78);background:#202020;}
+.chip-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px;}
+.chip{font-size:.72rem;font-style:italic;color:rgba(255,255,255,.65);padding:1px 7px;border:1px solid rgba(255,255,255,.12);border-radius:8px;}
+.mj-block{margin-top:8px;border:1.5px solid #c00;border-radius:10px;padding:9px 12px;}
+.mj-block-title{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:6px;}
+.mj-block-txt{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.6;}
+.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
+
+/* ── PORTRAIT PLACEHOLDER ── */
+.portrait-placeholder{width:80px;height:100px;border:1.5px solid rgba(255,255,255,.15);border-radius:6px;background:#202020;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
+.portrait-placeholder .p-icon{font-size:1.4rem;color:rgba(255,255,255,.22);margin-bottom:4px;}
+.portrait-placeholder .p-lbl{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25);text-align:center;line-height:1.3;}
+.pnj-portrait{width:80px;height:100px;object-fit:cover;border-radius:6px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;margin-right:10px;display:block;}
+
+@media(max-width:640px){.pnj-grid{grid-template-columns:1fr;}.search-input{margin-left:0;width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="filters-bar">
+    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
+    <button class="filter-btn" data-filter="vivant" onclick="setFilter('vivant',this)">Vivants</button>
+    <button class="filter-btn" data-filter="mort" onclick="setFilter('mort',this)">Morts</button>
+    <button class="filter-btn" data-filter="disparu" onclick="setFilter('disparu',this)">Disparus</button>
+    <button class="filter-btn" data-filter="inconnu" onclick="setFilter('inconnu',this)">Inconnus</button>
+    <input class="search-input" type="text" id="search-input" placeholder="Rechercher…" oninput="applyFilters()">
+  </div>
+  <div class="grid-wrap">
+    <div class="pnj-grid" id="pnj-grid">
+      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let PNJ_DATA = [];
+let currentFilter = 'tous';
+const STATUS_ICONS = {vivant:'◈',mort:'✝',disparu:'◎',inconnu:'?'};
+const STATUS_LABELS = {vivant:'Vivant',mort:'Mort',disparu:'Disparu',inconnu:'Inconnu'};
+
+async function init() {
+  try {
+    PNJ_DATA = await loadData('pnjs.json');
+    applyFilters();
+  } catch(e) {
+    document.getElementById('pnj-grid').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Données inaccessibles en file://. Utiliser un serveur local.</p>';
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const isMJ = getMJMode();
+  let filtered = isMJ ? PNJ_DATA : PNJ_DATA.filter(p => p.visible_joueurs !== false);
+  if (currentFilter !== 'tous') filtered = filtered.filter(p => p.statut === currentFilter);
+  if (q) filtered = filtered.filter(p =>
+    p.nom.toLowerCase().includes(q) || p.role.toLowerCase().includes(q) || (p.description||'').toLowerCase().includes(q));
+  renderGrid(filtered);
+}
+
+function renderGrid(pnjs) {
+  const grid = document.getElementById('pnj-grid');
+  if (!pnjs.length) { grid.innerHTML = '<p class="empty-msg">Aucun PNJ correspondant.</p>'; return; }
+  grid.innerHTML = pnjs.map(buildCard).join('');
+  applyMJMode(getMJMode());
+}
+
+function buildCard(pnj) {
+  const icon = STATUS_ICONS[pnj.statut] || '?';
+  const badgeLbl = STATUS_LABELS[pnj.statut] || pnj.statut;
+
+  let statsHTML = '';
+  if (pnj.stats) {
+    const chips = Object.entries(pnj.stats).map(([k,v]) => `<span class="pnj-stat-chip"><strong>${v}</strong> ${k}</span>`).join('');
+    if (chips) statsHTML = `<div class="pnj-stats">${chips}</div>`;
+  }
+
+  const locHTML = pnj.localisation
+    ? `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Localisation</span><span class="pnj-detail-val">${pnj.localisation}</span></div>` : '';
+
+  let relsHTML = '';
+  if (pnj.relations && pnj.relations.length) {
+    const chips = pnj.relations.map(id => `<span class="chip">${id.replace('pnj_','').replace('pj_','PJ·')}</span>`).join('');
+    relsHTML = `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Relations</span><div class="chip-list">${chips}</div></div>`;
+  }
+
+  let ticHTML = '';
+  if (pnj.tic) ticHTML += `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Tic</span><span class="pnj-detail-val">${pnj.tic}</span></div>`;
+  if (pnj.repliques && pnj.repliques.length)
+    ticHTML += `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Répliques</span><span class="pnj-detail-val">${pnj.repliques.map(r=>`« ${r} »`).join(' — ')}</span></div>`;
+
+  let capHTML = '';
+  if (pnj.capacites_confirmees && pnj.capacites_confirmees.length && (getMJMode() || pnj.capacites_visible_joueurs !== false))
+    capHTML = `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Capacités</span><div style="flex:1;">${pnj.capacites_confirmees.map(c=>`<div style="font-size:.78rem;font-style:italic;color:rgba(255,255,255,.65);margin-bottom:2px;">· ${c}</div>`).join('')}</div></div>`;
+
+  const notesHTML = pnj.notes ? `<div class="pnj-detail-row"><span class="pnj-detail-lbl">Notes</span><span class="pnj-detail-val">${pnj.notes}</span></div>` : '';
+
+  const phraseHTML = pnj.phrase_cle ? `<div class="phrase-cle">« ${pnj.phrase_cle} »</div>` : '';
+
+  const mjHTML = pnj.secrets_mj ? `
+    <div class="mj-only">
+      <div style="height:1px;background:#2a2a2a;margin:8px 0;"></div>
+      <div class="mj-block"><div class="mj-block-title">⚿ Secrets MJ</div><div class="mj-block-txt">${pnj.secrets_mj}</div></div>
+    </div>` : '';
+
+  return `
+  <div class="pnj-card" id="card-${pnj.id}" onclick="toggleCard('${pnj.id}',event)">
+    <div class="pnj-card-head">
+      <div class="pnj-status ${pnj.statut}">${icon}</div>
+      <div class="pnj-head-info">
+        <div class="pnj-nom">${pnj.nom}</div>
+        <div class="pnj-role">${pnj.role}</div>
+      </div>
+      <span class="pnj-badge ${pnj.statut}">${badgeLbl}</span>
+      <span class="pnj-chevron">▾</span>
+    </div>
+    <div class="pnj-card-div"></div>
+    <div class="pnj-card-body">
+      <div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:8px;">
+        ${pnj.portrait_url ? `<img class="pnj-portrait" src="${pnj.portrait_url}" alt="${pnj.nom}" loading="lazy">` : `<div class="portrait-placeholder"><span class="p-icon">◈</span><span class="p-lbl">Portrait<br>à venir</span></div>`}
+        <div style="flex:1;">${pnj.description ? `<p class="pnj-desc" style="margin:0;">${pnj.description}</p>` : ''}</div>
+      </div>
+      ${statsHTML}${phraseHTML}${locHTML}${ticHTML}${capHTML}${relsHTML}${notesHTML}${mjHTML}
+    </div>
+  </div>`;
+}
+
+function toggleCard(id, event) {
+  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.pnj-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+  applyMJMode(getMJMode());
+}
+
+(function(){ const _o=window.setMJMode; window.setMJMode=function(v){_o(v); if(PNJ_DATA&&PNJ_DATA.length) applyFilters();}; })();
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
