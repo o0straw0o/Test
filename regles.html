@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Règles — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:1000px;margin:0 auto;padding:20px 14px 56px;}
+.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
+.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
+.filter-btn:hover{background:#333;color:#f0f0f0;}
+.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
+.count-line{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:10px;}
+
+.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
+.regles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:start;}
+
+.regle-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
+.regle-card:not(.open):hover{background:#202020;}
+.regle-card.open{cursor:default;border-width:2px;}
+.regle-card-head{padding:11px 14px 9px;display:flex;align-items:flex-start;gap:10px;}
+.regle-head-info{flex:1;min-width:0;}
+.regle-titre{font-family:'Cinzel',serif;font-size:.74rem;font-weight:700;letter-spacing:.04em;line-height:1.25;margin-bottom:3px;}
+.cat-badge{font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:1px 7px;color:rgba(255,255,255,.5);white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;}
+.regle-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:3px;flex-shrink:0;}
+.regle-card.open .regle-chevron{transform:rotate(180deg);}
+.regle-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
+.regle-card.open .regle-card-div{display:block;}
+.regle-body{padding:0 14px 12px;display:none;}
+.regle-card.open .regle-body{display:block;}
+
+.regle-desc{font-size:.82rem;line-height:1.6;color:rgba(255,255,255,.78);margin:8px 0 6px;}
+.regle-exemple{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.55);border-left:2px solid rgba(255,255,255,.2);padding:4px 10px;margin-bottom:8px;line-height:1.5;}
+.mj-block{border:1.5px solid #c00;border-radius:10px;padding:8px 11px;}
+.mj-block-title{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:5px;}
+.mj-block-txt{font-size:.76rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.55;}
+
+/* DD Table */
+.dd-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:6px;}
+.dd-table th{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:5px 8px;border-bottom:2px solid rgba(255,255,255,.18);background:#202020;}
+.dd-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);line-height:1.5;vertical-align:top;}
+.dd-table tr:last-child td{border-bottom:none;}
+.dd-table td:first-child{font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;white-space:nowrap;}
+.dd-table td:nth-child(2){font-weight:600;white-space:nowrap;}
+.dd-table td:last-child{font-style:italic;color:rgba(255,255,255,.65);}
+
+/* Ref Table (tableaux dans les descriptions) */
+.ref-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:6px;}
+.ref-table th{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:5px 8px;border-bottom:2px solid rgba(255,255,255,.18);background:#202020;}
+.ref-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.07);line-height:1.5;vertical-align:top;color:rgba(255,255,255,.78);}
+.ref-table tr:last-child td{border-bottom:none;}
+.ref-table td:first-child{font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;color:#f0f0f0;}
+.ref-table td:last-child{color:rgba(255,255,255,.55);}
+
+.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
+
+@media(max-width:640px){.regles-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div class="filters-bar">
+    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
+    <button class="filter-btn" data-filter="jets" onclick="setFilter('jets',this)">Jets</button>
+    <button class="filter-btn" data-filter="combat" onclick="setFilter('combat',this)">Combat</button>
+    <button class="filter-btn" data-filter="competences" onclick="setFilter('competences',this)">Compétences</button>
+    <button class="filter-btn" data-filter="soins" onclick="setFilter('soins',this)">Soins</button>
+    <button class="filter-btn" data-filter="conditions" onclick="setFilter('conditions',this)">Conditions</button>
+    <button class="filter-btn" data-filter="exploration" onclick="setFilter('exploration',this)">Exploration</button>
+  </div>
+  <div class="count-line" id="count-line"></div>
+  <div class="grid-wrap">
+    <div class="regles-grid" id="regles-grid">
+      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let REGLES_DATA = [];
+let currentFilter = 'tous';
+
+const CAT_LABELS = {jets:'Jets',combat:'Combat',competences:'Compétences',soins:'Soins',conditions:'Conditions',exploration:'Exploration'};
+
+async function init() {
+  try {
+    REGLES_DATA = await loadData('regles.json');
+    applyFilters();
+  } catch(e) {
+    document.getElementById('regles-grid').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Données inaccessibles en file://. Utiliser un serveur local.</p>';
+  }
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const isMJ = getMJMode();
+  let filtered = isMJ ? REGLES_DATA : REGLES_DATA.filter(r => r.visible_joueurs !== false);
+  if (currentFilter !== 'tous') filtered = filtered.filter(r => r.categorie === currentFilter);
+  renderGrid(filtered);
+  const total = REGLES_DATA.length;
+  document.getElementById('count-line').textContent =
+    filtered.length === total ? `${total} règles` : `${filtered.length} / ${total} règles`;
+}
+
+function renderGrid(regles) {
+  const grid = document.getElementById('regles-grid');
+  if (!regles.length) { grid.innerHTML = '<p class="empty-msg">Aucune règle correspondante.</p>'; return; }
+  grid.innerHTML = regles.map(buildCard).join('');
+  applyMJMode(getMJMode());
+}
+
+function buildCard(r) {
+  const catLbl = CAT_LABELS[r.categorie] || r.categorie;
+
+  // DD table for regle_10
+  let tableHTML = '';
+  if (r.table_dd && r.table_dd.length) {
+    tableHTML = `<table class="dd-table">
+      <thead><tr><th>DD</th><th>Difficulté</th><th>Exemples</th></tr></thead>
+      <tbody>${r.table_dd.map(row =>
+        `<tr><td>${row.dd}</td><td>${row.difficulte}</td><td>${row.exemples}</td></tr>`
+      ).join('')}</tbody>
+    </table>`;
+  }
+
+  const exempleHTML = r.exemple
+    ? `<div class="regle-exemple">${r.exemple}</div>` : '';
+
+  const mjHTML = r.notes_mj
+    ? `<div class="mj-only"><div class="mj-block"><div class="mj-block-title">⚿ Notes MJ</div><div class="mj-block-txt">${r.notes_mj}</div></div></div>` : '';
+
+  return `
+  <div class="regle-card" id="regle-${r.id}" onclick="toggleCard('${r.id}',event)">
+    <div class="regle-card-head">
+      <div class="regle-head-info">
+        <div class="regle-titre">${r.titre}</div>
+      </div>
+      <span class="cat-badge">${catLbl}</span>
+      <span class="regle-chevron">▾</span>
+    </div>
+    <div class="regle-card-div"></div>
+    <div class="regle-body">
+      <div class="regle-desc">${r.description}</div>
+      ${tableHTML}
+      ${exempleHTML}
+      ${mjHTML}
+    </div>
+  </div>`;
+}
+
+function toggleCard(id, event) {
+  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
+  const card = document.getElementById('regle-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.regle-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+  applyMJMode(getMJMode());
+}
+
+(function(){ const _o=window.setMJMode; window.setMJMode=function(v){_o(v); if(REGLES_DATA&&REGLES_DATA.length) applyFilters();}; })();
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
