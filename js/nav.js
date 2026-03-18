@@ -1,4 +1,4 @@
-﻿// nav.js — Navigation commune et toggle MJ/Joueur
+// nav.js — Navigation commune et toggle MJ/Joueur
 // La Larme d'Argent — Outil de gestion de campagne
 
 const NAV_ITEMS = [
