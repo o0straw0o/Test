@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dés — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:680px;margin:0 auto;padding:20px 14px 56px;}
+.panel{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:20px;margin-bottom:14px;}
+.panel-title{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07);}
+
+/* Dice buttons */
+.dice-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+.die-btn{width:84px;height:84px;background:#202020;border:1.5px solid rgba(255,255,255,.18);border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .15s;font-family:'Cinzel',serif;color:#f0f0f0;outline:none;}
+.die-btn:hover{background:#252525;border-color:rgba(255,255,255,.5);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.4);}
+.die-btn:active{transform:translateY(0);}
+.die-name{font-size:1.2rem;font-weight:700;letter-spacing:.04em;}
+.die-sub{font-size:.4rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px;}
+
+/* Custom roll */
+.custom-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ci{background:#202020;border:1.5px solid rgba(255,255,255,.18);border-radius:8px;color:#f0f0f0;font-family:'Cinzel',serif;padding:8px 10px;outline:none;font-size:.88rem;transition:border-color .15s;}
+.ci:focus{border-color:rgba(255,255,255,.45);}
+input.ci[type=number]{width:62px;text-align:center;}
+select.ci{flex:1;min-width:90px;}
+select.ci option{background:#1a1a1a;}
+.custom-sep{color:rgba(255,255,255,.35);font-family:'Cinzel',serif;font-size:1rem;flex-shrink:0;user-select:none;}
+.roll-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:9px 20px;background:#c8966a;border:none;border-radius:8px;color:#111;cursor:pointer;transition:opacity .15s;font-weight:700;}
+.roll-btn:hover{opacity:.85;}
+
+/* Result */
+.result-area{text-align:center;padding:10px 0 6px;}
+.result-total{font-family:'Cinzel',serif;font-size:4.5rem;font-weight:700;line-height:1;letter-spacing:.02em;}
+.result-total.crit{color:#f0c040;}
+.result-total.fumble{color:#c55;}
+.result-detail{font-size:.82rem;font-style:italic;color:rgba(255,255,255,.5);margin-top:6px;line-height:1.5;}
+.result-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 12px;border-radius:20px;margin-top:8px;}
+.result-badge.crit{background:rgba(240,192,64,.12);border:1px solid #f0c040;color:#f0c040;}
+.result-badge.fumble{background:rgba(200,80,80,.12);border:1px solid #c55;color:#c55;}
+
+/* History */
+.hist-item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.06);}
+.hist-item:last-child{border-bottom:none;}
+.hist-item:first-child{font-size:.85rem;}
+.hist-lbl{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.08em;color:rgba(255,255,255,.5);min-width:70px;flex-shrink:0;}
+.hist-rolls{flex:1;color:rgba(255,255,255,.38);font-style:italic;font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hist-tot{font-family:'Cinzel',serif;font-weight:700;font-size:.95rem;min-width:34px;text-align:right;flex-shrink:0;}
+.hist-item.crit .hist-tot{color:#f0c040;}
+.hist-item.fumble .hist-tot{color:#c55;}
+
+@media(max-width:500px){.die-btn{width:72px;height:72px;}.die-name{font-size:1rem;}}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Lancer rapide -->
+  <div class="panel">
+    <div class="panel-title">Lancer rapide — cliquer sur un dé</div>
+    <div class="dice-row" id="dice-row"></div>
+  </div>
+
+  <!-- Lancer personnalisé -->
+  <div class="panel">
+    <div class="panel-title">Lancer personnalisé</div>
+    <div class="custom-row">
+      <input class="ci" type="number" id="qty" value="1" min="1" max="99" title="Nombre de dés">
+      <span class="custom-sep">×</span>
+      <select class="ci" id="die-sel">
+        <option value="4">d4</option>
+        <option value="6" selected>d6</option>
+        <option value="8">d8</option>
+        <option value="10">d10</option>
+        <option value="12">d12</option>
+        <option value="20">d20</option>
+        <option value="100">d100 (%)</option>
+      </select>
+      <span class="custom-sep">+</span>
+      <input class="ci" type="number" id="mod" value="0" title="Modificateur">
+      <button class="roll-btn" onclick="customRoll()">Lancer</button>
+    </div>
+  </div>
+
+  <!-- Résultat -->
+  <div class="panel" id="result-panel" style="display:none;">
+    <div class="panel-title">Résultat</div>
+    <div class="result-area">
+      <div class="result-total" id="result-total">—</div>
+      <div class="result-detail" id="result-detail"></div>
+      <div id="result-badge-wrap"></div>
+    </div>
+  </div>
+
+  <!-- Historique -->
+  <div class="panel" id="hist-panel" style="display:none;">
+    <div class="panel-title">Historique</div>
+    <div id="hist-list"></div>
+  </div>
+
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+const DICE = [4, 6, 8, 10, 12, 20, 100];
+let rollHistory = [];
+
+// Génère les boutons de dés
+document.getElementById('dice-row').innerHTML = DICE.map(n =>
+  `<button class="die-btn" id="die-${n}" onclick="quickRoll(${n})">
+    <span class="die-name">d${n === 100 ? '%' : n}</span>
+    <span class="die-sub">${n === 100 ? 'percentile' : n + ' faces'}</span>
+  </button>`
+).join('');
+
+function rollDie(n) { return Math.floor(Math.random() * n) + 1; }
+
+function quickRoll(n) {
+  const result = rollDie(n);
+  flashDie(n);
+  const label = 'd' + (n === 100 ? '%' : n);
+  displayResult(label, [result], 0, n);
+}
+
+function customRoll() {
+  const qty = Math.max(1, Math.min(99, parseInt(document.getElementById('qty').value) || 1));
+  const die  = parseInt(document.getElementById('die-sel').value);
+  const mod  = parseInt(document.getElementById('mod').value) || 0;
+  const rolls = Array.from({length: qty}, () => rollDie(die));
+  const label = (qty > 1 ? qty : '') + 'd' + (die === 100 ? '%' : die);
+  displayResult(label, rolls, mod, die);
+}
+
+function flashDie(n) {
+  const btn = document.getElementById('die-' + n);
+  if (!btn) return;
+  btn.style.borderColor = '#c8966a';
+  btn.style.color = '#c8966a';
+  setTimeout(() => { btn.style.borderColor = ''; btn.style.color = ''; }, 500);
+}
+
+function displayResult(label, rolls, mod, dieMax) {
+  const sum   = rolls.reduce((a, b) => a + b, 0);
+  const total = sum + mod;
+  const isCrit   = rolls.length === 1 && dieMax === 20 && rolls[0] === 20;
+  const isFumble = rolls.length === 1 && dieMax === 20 && rolls[0] === 1;
+
+  const modStr  = mod > 0 ? ` + ${mod}` : mod < 0 ? ` − ${Math.abs(mod)}` : '';
+  const rollStr = rolls.length > 1 ? `[${rolls.join(' + ')}]` : String(rolls[0]);
+  const detail  = rolls.length > 1 || mod !== 0
+    ? `${label}${modStr} → ${rollStr}${modStr} = ${total}`
+    : label;
+
+  document.getElementById('result-panel').style.display = 'block';
+  const totalEl = document.getElementById('result-total');
+  totalEl.textContent = total;
+  totalEl.className   = 'result-total' + (isCrit ? ' crit' : isFumble ? ' fumble' : '');
+  document.getElementById('result-detail').textContent = detail;
+  document.getElementById('result-badge-wrap').innerHTML =
+    isCrit   ? '<span class="result-badge crit">✦ Critique !</span>' :
+    isFumble ? '<span class="result-badge fumble">✗ Fumble</span>' : '';
+
+  rollHistory.unshift({ label, rolls, mod, total, isCrit, isFumble });
+  if (rollHistory.length > 20) rollHistory.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  document.getElementById('hist-panel').style.display = 'block';
+  document.getElementById('hist-list').innerHTML = rollHistory.map((h, i) => {
+    const modStr = h.mod > 0 ? '+' + h.mod : h.mod < 0 ? String(h.mod) : '';
+    const cls = h.isCrit ? ' crit' : h.isFumble ? ' fumble' : '';
+    const detail = h.rolls.length > 1 || h.mod !== 0
+      ? `[${h.rolls.join(', ')}]${modStr ? ' ' + modStr : ''}`
+      : '';
+    return `<div class="hist-item${cls}">
+      <span class="hist-lbl">${h.label}${modStr}</span>
+      <span class="hist-rolls">${detail}</span>
+      <span class="hist-tot">${h.total}</span>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {});
+</script>
+</body>
+</html>
