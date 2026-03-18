@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quêtes — La Larme d'Argent</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:900px;margin:0 auto;padding:20px 14px 56px;}
+
+/* ── SECTION HEADER ── */
+.sec-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px;}
+.sec-header:first-child{margin-top:0;}
+.sec-h-line{flex:1;height:1px;background:rgba(255,255,255,.2);}
+.sec-h-label{font-family:'Cinzel',serif;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;}
+
+/* ── QUÊTE CARD ── */
+.quete-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;margin-bottom:8px;cursor:pointer;transition:background .15s;}
+.quete-card:not(.open):hover{background:#202020;}
+.quete-card.open{cursor:default;border-width:2px;}
+.quete-card.critique{border-color:#c00;border-width:2px;}
+.quete-card.terminee{opacity:.72;}
+.quete-card.terminee:not(.open):hover{opacity:1;background:#202020;}
+
+.quete-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
+.quete-head-info{flex:1;min-width:0;}
+.quete-titre{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:4px;}
+.quete-desc{font-size:.82rem;font-style:italic;color:rgba(255,255,255,.65);line-height:1.55;}
+.badge-col{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;}
+.q-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.15);border-radius:20px;padding:1px 8px;white-space:nowrap;}
+.q-badge.active{border-color:#3a7a2a;color:#3a7a2a;}
+.q-badge.critique{border-color:#c00;color:#c00;}
+.q-badge.importante{border-color:rgba(255,255,255,.42);color:rgba(255,255,255,.55);}
+.q-badge.secondaire{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.42);}
+.q-badge.suspens{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.42);}
+.q-badge.terminee{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.3);}
+.quete-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:3px;flex-shrink:0;}
+.quete-card.open .quete-chevron{transform:rotate(180deg);}
+
+.quete-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
+.quete-card.open .quete-card-div{display:block;}
+.quete-body{padding:0 14px 12px;display:none;}
+.quete-card.open .quete-body{display:block;}
+
+/* Objectifs */
+.obj-list{list-style:none;margin-bottom:10px;}
+.obj-item{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:rgba(255,255,255,.78);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.07);line-height:1.5;}
+.obj-item:last-child{border-bottom:none;}
+.obj-check{width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:.55rem;}
+.obj-check.done{background:#fff;color:#111;}
+.obj-txt.done{text-decoration:line-through;color:rgba(255,255,255,.35);font-style:italic;}
+
+/* Indices */
+.indices-section{margin-bottom:10px;}
+.indices-title{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:2px;margin-bottom:5px;}
+.indice-item{font-size:.8rem;color:rgba(255,255,255,.78);font-style:italic;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.07);display:flex;gap:7px;}
+.indice-item:last-child{border-bottom:none;}
+.indice-item::before{content:'◈';color:#f0f0f0;font-size:.55rem;flex-shrink:0;margin-top:2px;}
+
+/* Meta */
+.quete-meta{border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px 12px;background:#202020;margin-bottom:8px;}
+.q-row{display:flex;gap:0;margin-bottom:4px;font-size:.78rem;line-height:1.5;}
+.q-row:last-child{margin-bottom:0;}
+.q-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#f0f0f0;min-width:90px;flex-shrink:0;}
+.q-val{color:rgba(255,255,255,.65);font-style:italic;flex:1;}
+.chip-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;}
+.chip{font-size:.72rem;font-style:italic;color:rgba(255,255,255,.65);padding:1px 7px;border:1px solid rgba(255,255,255,.12);border-radius:8px;}
+
+/* Récompense */
+.recompense{border-left:2px solid rgba(255,255,255,.2);padding:6px 12px;background:#202020;font-size:.8rem;font-style:italic;color:rgba(255,255,255,.78);margin-bottom:8px;display:flex;gap:8px;align-items:flex-start;}
+.recompense::before{content:'✦';flex-shrink:0;margin-top:1px;}
+
+/* MJ */
+.mj-block{border:1.5px solid #c00;border-radius:10px;padding:9px 12px;}
+.mj-block-title{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:6px;}
+.mj-block-txt{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.6;}
+
+/* Done grid */
+.done-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+@media(max-width:640px){
+  .done-grid{grid-template-columns:1fr;}
+  .quete-head{padding:10px 12px 8px;}
+  .quete-body{padding:0 12px 10px;}
+  .quete-card-div{margin:0 12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <div id="quetes-wrap">
+    <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;text-align:center;padding:40px;">Chargement…</p>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+let QUETES_DATA = [];
+
+async function init() {
+  try {
+    QUETES_DATA = await loadData('quetes.json');
+    render(QUETES_DATA);
+  } catch(e) {
+    document.getElementById('quetes-wrap').innerHTML =
+      '<p style="color:#c00;font-size:.82rem;font-style:italic;text-align:center;padding:40px;">⚠ Données inaccessibles en file://. Utiliser un serveur local.</p>';
+  }
+}
+
+function render(quetes) {
+  if (!getMJMode()) quetes = quetes.filter(q => q.visible_joueurs !== false);
+  const critique = quetes.filter(q => q.statut === 'active' && q.priorite === 'critique');
+  const importantes = quetes.filter(q => q.statut === 'active' && q.priorite !== 'critique');
+  const suspens = quetes.filter(q => q.statut === 'en suspens');
+  const terminees = quetes.filter(q => q.statut === 'terminée');
+  let html = '';
+  if (critique.length) {
+    html += sectionHead('Actives — Critique');
+    html += critique.map(buildCard).join('');
+  }
+  if (importantes.length) {
+    html += sectionHead('Actives — Importantes');
+    html += importantes.map(buildCard).join('');
+  }
+  if (suspens.length) {
+    html += sectionHead('En suspens');
+    html += suspens.map(buildCard).join('');
+  }
+  if (terminees.length) {
+    html += sectionHead('Terminées');
+    html += '<div class="done-grid">' + terminees.map(buildCard).join('') + '</div>';
+  }
+  document.getElementById('quetes-wrap').innerHTML = html;
+  applyMJMode(getMJMode());
+}
+
+function sectionHead(label) {
+  return `<div class="sec-header"><div class="sec-h-line"></div><span class="sec-h-label">${label}</span><div class="sec-h-line"></div></div>`;
+}
+
+function buildCard(q) {
+  const statutLbl = q.statut === 'terminée' ? 'Terminée' : q.statut === 'active' ? 'Active' : 'En suspens';
+  const prioriteLbl = q.priorite === 'critique' ? 'Critique' : q.priorite === 'importante' ? 'Importante' : q.priorite === 'secondaire' ? 'Secondaire' : null;
+  const critiqueCls = q.priorite === 'critique' ? ' critique' : '';
+  const terminéeCls = q.statut === 'terminée' ? ' terminee' : '';
+
+  const objHTML = (q.objectifs || []).filter(o => getMJMode() || o.visible_joueurs !== false).map(o =>
+    `<li class="obj-item"><span class="obj-check${o.accompli ? ' done' : ''}">${o.accompli ? '✓' : ''}</span><span class="obj-txt${o.accompli ? ' done' : ''}">${o.texte}</span></li>`
+  ).join('');
+
+  let indicesHTML = '';
+  if (q.indices && q.indices.length) {
+    indicesHTML = `<div class="indices-section">
+      <div class="indices-title">Indices connus</div>
+      ${q.indices.map(i => `<div class="indice-item">${i}</div>`).join('')}
+    </div>`;
+  }
+
+  const lieuxChips = (q.lieux_impliques||[]).map(id => `<span class="chip">${id.replace('lieu_','Lieu ')}</span>`).join('');
+  const pnjChips = (q.pnjs_impliques||[]).map(id => `<span class="chip">${id.replace('pnj_','')}</span>`).join('');
+  const metaHTML = (lieuxChips || pnjChips) ? `<div class="quete-meta">
+    ${lieuxChips ? `<div class="q-row"><span class="q-lbl">Lieux</span><div class="chip-list">${lieuxChips}</div></div>` : ''}
+    ${pnjChips ? `<div class="q-row"><span class="q-lbl">PNJs</span><div class="chip-list">${pnjChips}</div></div>` : ''}
+  </div>` : '';
+
+  const recompHTML = q.recompense ? `<div class="recompense">${q.recompense}</div>` : '';
+
+  const mjHTML = q.notes_mj ? `<div class="mj-only">
+    <div class="mj-block"><div class="mj-block-title">⚿ Notes MJ</div><div class="mj-block-txt">${q.notes_mj}</div></div>
+  </div>` : '';
+
+  return `
+  <div class="quete-card${critiqueCls}${terminéeCls}" id="q-${q.id}" onclick="toggle('${q.id}',event)">
+    <div class="quete-head">
+      <div class="quete-head-info">
+        <div class="quete-titre">${q.titre}</div>
+        <div class="quete-desc">${q.description}</div>
+      </div>
+      <div class="badge-col">
+        <span class="q-badge ${q.statut === 'terminée' ? 'terminee' : q.statut === 'en suspens' ? 'suspens' : 'active'}">${statutLbl}</span>
+        ${prioriteLbl ? `<span class="q-badge ${q.priorite}">${prioriteLbl}</span>` : ''}
+      </div>
+      <span class="quete-chevron">▾</span>
+    </div>
+    <div class="quete-card-div"></div>
+    <div class="quete-body">
+      ${objHTML ? `<ul class="obj-list">${objHTML}</ul>` : ''}
+      ${indicesHTML}
+      ${metaHTML}
+      ${recompHTML}
+      ${mjHTML}
+    </div>
+  </div>`;
+}
+
+function toggle(id, event) {
+  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
+  const card = document.getElementById('q-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.quete-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+  applyMJMode(getMJMode());
+}
+
+(function(){ const _o=window.setMJMode; window.setMJMode=function(v){_o(v); if(QUETES_DATA&&QUETES_DATA.length) render(QUETES_DATA);}; })();
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
