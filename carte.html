@@ -1,0 +1,415 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carte — La Larme d'Argent</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
+#main-nav{position:sticky;top:0;z-index:1000;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+.nav-link.active{color:#fff;border-bottom-color:#fff;}
+.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+.mj-only{display:none;}
+
+.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+
+/* ── BREADCRUMB ─────────────────────────────────────────────────────────── */
+.breadcrumb{display:flex;align-items:center;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.bc-item{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;}
+.bc-link{color:rgba(255,255,255,.45);cursor:pointer;transition:color .2s;}
+.bc-link:hover{color:rgba(255,255,255,.85);}
+.bc-current{color:#f0f0f0;}
+.bc-sep{color:rgba(255,255,255,.25);font-size:.7rem;margin:0 2px;}
+
+/* ── MAP CONTAINER ──────────────────────────────────────────────────────── */
+.map-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;overflow:hidden;}
+.map-header{border-bottom:1px solid rgba(255,255,255,.07);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.map-title{font-family:'Cinzel',serif;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.niveau-badge{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:2px 8px;color:rgba(255,255,255,.55);}
+.mkr-count{font-size:.72rem;font-style:italic;color:rgba(255,255,255,.35);margin-left:auto;}
+
+/* ── LEAFLET ────────────────────────────────────────────────────────────── */
+#leaflet-map{width:100%;height:560px;background:#1a1a1a;}
+.leaflet-popup-content-wrapper{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.5);color:#f0f0f0;}
+.leaflet-popup-content{margin:10px 14px;}
+.leaflet-popup-tip-container .leaflet-popup-tip{background:#1a1a1a;}
+.leaflet-control-zoom a{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.2);}
+.leaflet-control-zoom a:hover{background:#252525;}
+
+/* ── BATTLEMAP ──────────────────────────────────────────────────────────── */
+.battlemap-container{width:100%;overflow:auto;max-height:600px;background:#111;}
+.battlemap-img{max-width:100%;display:block;margin:0 auto;}
+
+/* ── CARTE GRID (liste des cartes racines) ──────────────────────────────── */
+.carte-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:12px;}
+.carte-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.carte-card:hover{border-color:rgba(255,255,255,.35);transform:translateY(-2px);}
+.carte-thumb{width:100%;height:120px;object-fit:cover;display:block;}
+.carte-thumb-placeholder{width:100%;height:120px;background:#252525;display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(255,255,255,.2);}
+.carte-card-info{padding:10px 14px 12px;}
+.carte-card-nom{font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;margin-bottom:3px;}
+.carte-card-niveau{font-size:.7rem;font-style:italic;color:rgba(255,255,255,.4);}
+
+/* ── PLACEHOLDER & ERREURS ──────────────────────────────────────────────── */
+.placeholder-map{width:100%;height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.placeholder-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.4);}
+.empty-state{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:40px;text-align:center;font-style:italic;color:rgba(255,255,255,.4);}
+.error-notice{background:#1a1a1a;border:2px solid rgba(255,100,100,.25);border-radius:12px;padding:14px 20px;margin-bottom:12px;font-size:.8rem;color:rgba(255,180,180,.7);}
+.leaflet-control-attribution{display:none!important;}
+.leaflet-tooltip{background:#1a1a1a;border:1px solid rgba(255,255,255,.2);color:#f0f0f0;font-family:'Crimson Text',serif;font-size:.82rem;border-radius:6px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.5);white-space:nowrap;}
+.leaflet-tooltip::before{border-top-color:rgba(255,255,255,.2);}
+
+/* ── PAGE TITLE ─────────────────────────────────────────────────────────── */
+.page-title{font-family:'Cinzel',serif;font-size:.95rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;color:#f0f0f0;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.back-btn:hover{border-color:rgba(255,255,255,.5);color:#f0f0f0;}
+.leaflet-back-control{background:#1a1a1a;border:1px solid rgba(255,255,255,.2);border-radius:4px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55);cursor:pointer;font-size:.88rem;margin-top:4px;transition:all .2s;line-height:1;padding:0;}
+.leaflet-back-control:hover{background:#252525;border-color:rgba(255,255,255,.5);color:#f0f0f0;}
+.etage-badge{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.12);border-radius:20px;padding:2px 8px;color:#f0f0f0;}
+.leaflet-floor-nav{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.leaflet-floor-btn{display:block;width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:3px 6px;font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;text-align:center;min-width:34px;}
+.leaflet-floor-btn:hover{background:#252525;border-color:rgba(255,255,255,.5);color:#f0f0f0;}
+.leaflet-floor-active{display:block;width:100%;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:3px 6px;font-family:'Cinzel',serif;font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:#f0f0f0;text-align:center;min-width:34px;}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <div id="app"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/nav.js"></script>
+<script>
+'use strict';
+const NIVEAUX = { region: 'Région', ville: 'Ville', batiment: 'Bâtiment', battlemap: 'Bâtiment', monde: 'Monde' };
+
+let _cartes = [];
+let _lieux = [];
+let _navStack = [];   // stack of carte IDs (navigation history)
+let _leaflet = null;  // current Leaflet map instance
+
+function isMJ() { return localStorage.getItem('sw_mj_mode') === 'on'; }
+function esc(s) { return !s ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── ÉTAGES ───────────────────────────────────────────────────────────────
+let _currentEtageIdx = 0;
+
+function showEtage(carte, idx) {
+  _currentEtageIdx = idx;
+  renderBattlemap(carte);
+}
+
+// ── RETOUR CARTE PARENTE ──────────────────────────────────────────────────
+const PARENT_LABELS = {
+  monde: 'du monde',
+  region: 'de la région',
+  ville: 'de la ville',
+  batiment: 'du bâtiment',
+  battlemap: 'du bâtiment'
+};
+function buildBackBtn(carte) {
+  if (!carte.parent_id) return '';
+  const parent = _cartes.find(c => c.id === carte.parent_id && (isMJ() || c.visible_joueurs !== false));
+  if (!parent) return '';
+  const label = PARENT_LABELS[parent.niveau] || 'de la carte parente';
+  return `<button class="back-btn" onclick="goToParent('${parent.id}')">&#8592; Retour à la carte ${label}</button>`;
+}
+function goToParent(parentId) {
+  if (_navStack.length > 0) _navStack.pop();
+  showCarte(parentId);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function init() {
+  const app = document.getElementById('app');
+  try {
+    [_cartes, _lieux] = await Promise.all([loadData('cartes.json'), loadData('lieux.json')]);
+  } catch(err) {
+    app.innerHTML = '<div class="error-notice">Erreur de chargement — utiliser un serveur local (<code>python -m http.server 8000</code>).</div>';
+    return;
+  }
+
+  const roots = _cartes.filter(c => !c.parent_id && (isMJ() || c.visible_joueurs !== false));
+  if (roots.length === 0) {
+    app.innerHTML = '<div class="empty-state">Aucune carte disponible — créez des cartes dans l\'admin.</div>';
+  } else if (roots.length === 1) {
+    showCarte(roots[0].id);
+  } else {
+    showList(roots);
+  }
+}
+
+// ── LISTE DES CARTES RACINES ───────────────────────────────────────────────
+function showList(cartes) {
+  document.getElementById('app').innerHTML =
+    '<div class="page-title">Cartes</div>' +
+    '<div class="carte-grid">' +
+    cartes.map(c =>
+      `<div class="carte-card" onclick="showCarte('${c.id}')">` +
+        (c.image
+          ? `<img src="${esc(c.image)}" alt="${esc(c.nom)}" class="carte-thumb" onerror="this.style.display='none'">`
+          : '<div class="carte-thumb-placeholder">🗺</div>') +
+        `<div class="carte-card-info">` +
+          `<div class="carte-card-nom">${esc(c.nom)}</div>` +
+          `<div class="carte-card-niveau">${esc(NIVEAUX[c.niveau] || c.niveau || '')}</div>` +
+        `</div>` +
+      `</div>`
+    ).join('') +
+    '</div>';
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function showCarte(carteId) {
+  _currentEtageIdx = 0;
+  const carte = _cartes.find(c => c.id === carteId);
+  if (!carte) return;
+  if (_navStack[_navStack.length - 1] !== carteId) _navStack.push(carteId);
+  if (carte.niveau === 'battlemap' || carte.niveau === 'batiment') renderBattlemap(carte);
+  else renderLeaflet(carte);
+}
+
+function navTo(idx) {
+  _navStack = _navStack.slice(0, idx + 1);
+  const carte = _cartes.find(c => c.id === _navStack[idx]);
+  if (!carte) return;
+  // pop last so showCarte pushes it fresh
+  _navStack.pop();
+  showCarte(carte.id);
+}
+
+// ── BREADCRUMB ─────────────────────────────────────────────────────────────
+function buildBreadcrumb() {
+  if (_navStack.length <= 1) return '';
+  const items = _navStack.map((id, i) => {
+    const c = _cartes.find(x => x.id === id);
+    const nom = c ? c.nom : id;
+    if (i < _navStack.length - 1) {
+      return `<span class="bc-item bc-link" onclick="navTo(${i})">${esc(nom)}</span>`;
+    }
+    return `<span class="bc-item bc-current">${esc(nom)}</span>`;
+  });
+  return '<div class="breadcrumb">' + items.join('<span class="bc-sep">›</span>') + '</div>';
+}
+
+// ── BATTLEMAP (Leaflet) ─────────────────────────────────────────────────────
+function renderBattlemap(carte) {
+  destroyLeaflet();
+  const etages = (carte.etages && carte.etages.length > 0) ? carte.etages : null;
+  const etage = etages ? (etages[_currentEtageIdx] || etages[0]) : null;
+  const imgSrc = etage ? etage.image : carte.image;
+  const W = (etage ? etage.largeur : carte.largeur) || 1000;
+  const H = (etage ? etage.hauteur : carte.hauteur) || 800;
+
+  document.getElementById('app').innerHTML =
+    buildBreadcrumb() +
+    `<div class="map-wrap">` +
+      `<div class="map-header">` +
+        buildBackBtn(carte) +
+        `<span class="map-title">${esc(carte.nom)}</span>` +
+        `<span class="niveau-badge">${NIVEAUX[carte.niveau] || ''}</span>` +
+        (etage && etage.nom ? `<span class="etage-badge">${esc(etage.nom)}</span>` : '') +
+      `</div>` +
+      `<div id="leaflet-map"></div>` +
+    `</div>`;
+
+  if (!imgSrc) {
+    document.getElementById('leaflet-map').innerHTML =
+      '<div class="placeholder-map"><span class="placeholder-label">Aucune image — configurez les étages dans l\'admin</span></div>';
+    return;
+  }
+
+  const bounds = [[0, 0], [H, W]];
+  const map = L.map('leaflet-map', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 3,
+    zoomSnap: 0.25,
+    zoomControl: true,
+    attributionControl: false
+  });
+  _leaflet = map;
+
+  // ── Bouton retour ──────────────────────────────────────────────────
+  if (carte.parent_id) {
+    const _parent = _cartes.find(c => c.id === carte.parent_id && (isMJ() || c.visible_joueurs !== false));
+    if (_parent) {
+      const BackCtrl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function() {
+          const btn = L.DomUtil.create('button', 'leaflet-back-control');
+          btn.innerHTML = '&#8592;';
+          btn.title = 'Retour à la carte ' + (PARENT_LABELS[_parent.niveau] || 'parente');
+          L.DomEvent.on(btn, 'click', function(e) {
+            L.DomEvent.stopPropagation(e);
+            goToParent(_parent.id);
+          });
+          return btn;
+        }
+      });
+      new BackCtrl().addTo(map);
+    }
+  }
+
+  // ── Navigation entre étages ────────────────────────────────────────
+  if (etages && etages.length > 1) {
+    const currIdx = _currentEtageIdx < etages.length ? _currentEtageIdx : 0;
+    const FloorCtrl = L.Control.extend({
+      options: { position: 'topleft' },
+      onAdd: function() {
+        const div = L.DomUtil.create('div', 'leaflet-floor-nav');
+        etages.forEach((et, i) => {
+          if (i === currIdx) {
+            const span = L.DomUtil.create('span', 'leaflet-floor-active', div);
+            span.textContent = et.nom || ('Étage ' + (i + 1));
+          } else {
+            const btn = L.DomUtil.create('button', 'leaflet-floor-btn', div);
+            btn.textContent = et.nom || ('Étage ' + (i + 1));
+            L.DomEvent.on(btn, 'click', function(e) {
+              L.DomEvent.stopPropagation(e);
+              showEtage(carte, i);
+            });
+          }
+        });
+        return div;
+      }
+    });
+    new FloorCtrl().addTo(map);
+  }
+
+  L.imageOverlay(imgSrc, bounds).addTo(map);
+  map.fitBounds(bounds, {padding: [2, 2]});
+  map.setMinZoom(map.getZoom());
+}
+
+// ── LEAFLET MAP ────────────────────────────────────────────────────────────
+function renderLeaflet(carte) {
+  destroyLeaflet();
+  const marqueurs = (carte.marqueurs || []).filter(m => isMJ() || m.visible_joueurs !== false);
+
+  document.getElementById('app').innerHTML =
+    buildBreadcrumb() +
+    `<div class="map-wrap">` +
+      `<div class="map-header">` +
+        `<span class="map-title">${esc(carte.nom)}</span>` +
+        `<span class="niveau-badge">${esc(NIVEAUX[carte.niveau] || carte.niveau || '')}</span>` +
+        `<span class="mkr-count">${marqueurs.length} marqueur(s)</span>` +
+      `</div>` +
+      `<div id="leaflet-map"></div>` +
+    `</div>`;
+
+  if (!carte.image) {
+    document.getElementById('leaflet-map').innerHTML =
+      '<div class="placeholder-map"><span class="placeholder-label">Aucune image — configurez une image dans l\'admin</span></div>';
+    return;
+  }
+
+  const W = carte.largeur || 1000;
+  const H = carte.hauteur || 800;
+  const bounds = [[0, 0], [H, W]];
+
+  const map = L.map('leaflet-map', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 3,
+    zoomSnap: 0.25,
+    zoomControl: true,
+    attributionControl: false
+  });
+  _leaflet = map;
+
+  // ── Bouton retour (Leaflet control, topleft sous le zoom) ──────────
+  if (carte.parent_id) {
+    const _parent = _cartes.find(c => c.id === carte.parent_id && (isMJ() || c.visible_joueurs !== false));
+    if (_parent) {
+      const BackCtrl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function() {
+          const btn = L.DomUtil.create('button', 'leaflet-back-control');
+          btn.innerHTML = '&#8592;';
+          btn.title = 'Retour à la carte ' + (PARENT_LABELS[_parent.niveau] || 'parente');
+          L.DomEvent.on(btn, 'click', function(e) {
+            L.DomEvent.stopPropagation(e);
+            goToParent(_parent.id);
+          });
+          return btn;
+        }
+      });
+      new BackCtrl().addTo(map);
+    }
+  }
+
+  L.imageOverlay(carte.image, bounds).addTo(map);
+  map.fitBounds(bounds, {padding: [2, 2]});
+  map.setMinZoom(map.getZoom());
+
+  marqueurs.forEach((m, idx) => {
+    const lieu = _lieux.find(l => l.id === m.lieu_id);
+    const enfantCarte = m.enfant_carte_id
+      ? _cartes.find(c => c.id === m.enfant_carte_id && (isMJ() || c.visible_joueurs !== false))
+      : null;
+
+    const isMJOnly = m.visible_joueurs === false;
+    const STATUT_COLORS = {'visité':'#44AA99','connu':'#88C4B0','inexploré':'#88C4B0','inconnu':'#888888'};
+    const color = m.couleur || (isMJOnly ? '#c44' : (STATUT_COLORS[lieu?.statut] || '#44AA99'));
+    // Leaflet CRS.Simple: y axis from bottom, images from top — invert y
+    const latLng = [H - m.y, m.x];
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;cursor:pointer;">${idx + 1}</div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+
+    const nomLieu = lieu ? lieu.nom : (m.lieu_id || 'Marqueur');
+    const typeLieu = lieu ? (lieu.type || lieu.statut || '') : '';
+    const mjTag = isMJOnly && isMJ() ? '<div style="font-size:.65rem;color:#c88;margin-top:2px;">🔒 MJ seulement</div>' : '';
+    const zoomBtn = enfantCarte
+      ? `<div style="margin-top:8px"><button onclick="showCarte('${enfantCarte.id}')" style="background:#44AA99;color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:.72rem;cursor:pointer;font-family:inherit;letter-spacing:.04em;">Voir carte →</button></div>`
+      : '';
+
+    const descTag = (lieu && lieu.statut === 'visité' && lieu.description)
+      ? `<div style="font-size:.78rem;font-style:italic;color:rgba(255,255,255,.7);margin:6px 0 4px;line-height:1.55;border-top:1px solid rgba(255,255,255,.1);padding-top:6px;">${esc(lieu.description)}</div>`
+      : '';
+    const popup = L.popup({ maxWidth: 260, className: '' }).setContent(
+      `<div style="font-family:'Crimson Text',serif;">` +
+        `<div style="font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;margin-bottom:3px;">${esc(nomLieu)}</div>` +
+        (typeLieu ? `<div style="font-size:.75rem;font-style:italic;color:rgba(255,255,255,.45);margin-bottom:4px;">${esc(typeLieu)}</div>` : '') +
+        mjTag +
+        descTag +
+        zoomBtn +
+      `</div>`
+    );
+
+    const nomTooltip = lieu ? lieu.nom : (m.lieu_id || 'Marqueur');
+    L.marker(latLng, { icon }).addTo(map)
+      .bindTooltip(nomTooltip, { direction: 'top', offset: [0, -13] })
+      .bindPopup(popup);
+  });
+}
+
+function destroyLeaflet() {
+  if (_leaflet) { _leaflet.remove(); _leaflet = null; }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
