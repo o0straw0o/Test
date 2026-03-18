@@ -1,0 +1,1141 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aventuriers — La Larme d'Argent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background:#aaa; font-family:"Crimson Text",serif; color:#000; padding:16px 12px; }
+
+    /* Tabs */
+    .tabs{
+      display:flex; justify-content:center; flex-wrap:wrap; gap:6px;
+      max-width:980px; margin:0 auto 10px;
+    }
+    .tab-btn{
+      font-family:Cinzel,serif; font-size:.65rem; letter-spacing:.12em; text-transform:uppercase;
+      padding:7px 16px; background:#ddd; color:#666;
+      border:1.5px solid #888; border-bottom:none; cursor:pointer;
+      border-radius:10px 10px 0 0; position:relative; top:1px;
+      transition:all .15s;
+    }
+    .tab-btn:hover{ background:#ccc; color:#000; }
+    .tab-btn.active{
+      background:#fff; color:#000; border-color:#000; border-bottom-color:#fff;
+      font-weight:700; z-index:2;
+    }
+
+    /* Sheet */
+    .sheet{
+      display:none;
+      background:#fff; border:2px solid #000; border-radius:16px;
+      max-width:980px; margin:0 auto; overflow:hidden;
+    }
+    .sheet.active{ display:block; }
+
+    /* Header layout: portrait / identity / vitals */
+    .sheet-header{
+      border-bottom:2px solid #000;
+      padding:14px 18px 12px;
+      display:grid;
+      grid-template-columns:128px 1fr 340px;
+      gap:12px;
+      align-items:stretch;
+    }
+    .portrait-box{
+      border:1.5px solid #000; border-radius:16px;
+      background:linear-gradient(135deg,#f7f7f7,#fff);
+      display:flex; align-items:center; justify-content:center;
+      padding:8px; overflow:hidden;
+    }
+    .portrait-ph{
+      width:100%; height:100px;
+      border:1.5px dashed #888; border-radius:12px;
+      display:flex; align-items:center; justify-content:center; text-align:center;
+      color:#666; font-family:Cinzel,serif; font-size:.6rem; letter-spacing:.14em;
+      text-transform:uppercase; padding:10px; line-height:1.25;
+    }
+    .portrait-img{
+      width:100%; height:100%; object-fit:cover; border-radius:10px; display:block;
+    }
+
+    .identity{ display:flex; flex-direction:column; justify-content:flex-start; padding-top:2px; }
+    .char-name{ font-family:Cinzel,serif; font-size:1.9rem; font-weight:700; line-height:1; letter-spacing:.02em; }
+    .char-meta{ font-size:.9rem; color:#444; font-style:italic; margin-top:3px; }
+    .align-pill{
+      display:inline-block; margin-top:6px; width:fit-content;
+      font-family:Cinzel,serif; font-size:.55rem; letter-spacing:.14em; text-transform:uppercase;
+      border:1.5px solid #000; border-radius:20px; padding:2px 11px;
+    }
+    .char-quote{
+      margin-top:8px; font-size:.87rem; color:#333; font-style:italic; line-height:1.45;
+      padding-left:10px; border-left:2px solid #000;
+    }
+
+    /* Vitals bento */
+    .vitals-bento{
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:6px; padding:6px;
+      border:1.5px solid #000; border-radius:16px;
+      background:#fff; align-content:center; justify-items:stretch;
+    }
+    .vbox{
+      border:1.5px solid #000; border-radius:14px; padding:7px 8px;
+      text-align:center; min-height:58px;
+      display:flex; flex-direction:column; justify-content:center; gap:2px;
+      background:#fff;
+    }
+    .vbox .top{ display:flex; align-items:center; justify-content:center; gap:6px; min-height:14px; }
+    .vbox .v{ font-family:Cinzel,serif; font-size:1.18rem; font-weight:700; line-height:1; display:block; }
+    .vbox .l{ font-size:.52rem; letter-spacing:.09em; text-transform:uppercase; color:#555; display:block; }
+    .alias{ font-size:.52rem; color:#666; font-style:italic; }
+    .ico{ width:14px; height:14px; display:inline-block; flex:0 0 auto; }
+    .ico svg{ width:14px; height:14px; display:block; }
+    .ico { fill:#000; stroke:none; }
+
+    /* Body grid */
+    .sheet-body{ display:grid; grid-template-columns:210px 1fr; min-height:0; }
+    .sidebar{
+      border-right:2px solid #000; padding:14px 12px;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    .main-content{ padding:14px 16px; display:flex; flex-direction:column; gap:12px; }
+
+    /* Titles */
+    .sk-title{
+      font-family:Cinzel,serif; font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
+      border-bottom:1px solid #000; padding-bottom:2px; margin-bottom:5px; color:#000;
+    }
+    .sec-title{
+      font-family:Cinzel,serif; font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+      border-bottom:1.5px solid #000; padding-bottom:3px; margin-bottom:7px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .sec-note{
+      font-family:"Crimson Text",serif; font-style:italic; font-size:.73rem;
+      letter-spacing:0; color:#666; font-weight:400; text-transform:none;
+    }
+
+    /* Attributes */
+    .attrs{ display:flex; flex-direction:column; gap:8px; align-items:stretch; }
+    .arow{ display:grid; grid-template-columns:74px 52px; gap:10px; align-items:center; width:100%; }
+    .alabel{
+      font-family:Cinzel,serif; font-size:.5rem; letter-spacing:.08em; text-transform:uppercase;
+      color:#555; text-align:right;
+    }
+    .acircle{
+      width:52px; height:52px; border-radius:50%; border:1.5px solid #000;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
+    .ascore{ font-family:Cinzel,serif; font-size:1.15rem; font-weight:700; line-height:1; }
+    .amod{ font-size:.68rem; color:#444; line-height:1.1; }
+
+    /* Skills */
+    .sklist{ display:flex; flex-direction:column; gap:1px; }
+    .skrow{ display:flex; align-items:center; gap:6px; font-size:.75rem; line-height:1.55; color:#777; }
+    .skrow.p{ color:#000; font-weight:600; }
+    .skrow.exp{ color:#000; font-weight:700; }
+    .skrow .m{ font-family:Cinzel,serif; font-size:.67rem; min-width:24px; text-align:right; color:#000; flex-shrink:0; }
+    .skdot{ width:7px; height:7px; border-radius:50%; border:1.5px solid #bbb; flex-shrink:0; }
+    .skdot.f{ background:#000; border-color:#000; }
+    .skdot.e{ background:#000; border-color:#000; box-shadow:0 0 0 2px #000, 0 0 0 3.5px #fff, 0 0 0 5px #000; }
+    .expnote{ font-size:.62rem; color:#777; font-style:italic; margin-top:3px; }
+
+    /* Equip */
+    .equip-title{
+      font-family:Cinzel,serif; font-size:.55rem; letter-spacing:.2em; text-transform:uppercase;
+      border-bottom:1px solid #000; padding-bottom:2px; margin-bottom:5px; color:#000;
+    }
+    .equip{ font-size:.78rem; line-height:1.8; color:#444; }
+    /* Argent */
+    .argent-row{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+    .coin-box{ border:1px solid #bbb; border-radius:6px; padding:3px 7px; text-align:center; min-width:32px; }
+    .coin-lbl{ font-family:Cinzel,serif; font-size:.48rem; letter-spacing:.1em; text-transform:uppercase; color:#666; display:block; }
+    .coin-val{ font-family:Cinzel,serif; font-size:.78rem; font-weight:700; display:block; }
+    /* Bouton impression MJ */
+    .print-btn-row{ display:flex; justify-content:center; padding:8px 14px; border-top:1.5px solid #000; }
+    .print-btn{ font-family:Cinzel,serif; font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; border:1.5px solid #000; border-radius:20px; padding:5px 16px; background:#fff; color:#000; cursor:pointer; transition:background .15s; }
+    .print-btn:hover{ background:#f5f5f5; }
+
+    /* Cards */
+    .cards{ display:flex; flex-direction:column; gap:6px; }
+    .cards2{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .card{ border:1.5px solid #000; border-radius:10px; padding:8px 11px; }
+    .card.minor{ border-color:#aaab; border-style:dashed; }
+    .card.pw{ background:#f7f7f7; }
+    .card.innate{ border-style:dotted; border-color:#555; background:#fff; }
+
+    .card-h{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:2px; }
+    .card-n{ font-family:Cinzel,serif; font-size:.72rem; font-weight:700; }
+    .card-right{ font-family:Cinzel,serif; font-size:.68rem; font-weight:700; color:#000; white-space:nowrap; }
+    .meta-line{ display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 0; }
+    .chip{
+      border:1px solid #bbb; border-radius:999px; padding:2px 8px;
+      font-family:Cinzel,serif; font-size:.52rem; letter-spacing:.12em; text-transform:uppercase;
+      color:#444; background:#fff;
+    }
+    .chip.strong{ border-color:#000; color:#000; }
+    .chip.stat{ border-color:#000; color:#000; }
+    .card-desc{ font-size:.78rem; color:#444; line-height:1.45; margin-top:6px; }
+    .card-tech{
+      margin-top:6px; padding-top:6px; border-top:1px dashed #bbb;
+      font-size:.75rem; color:#555; line-height:1.4; font-style:italic;
+    }
+
+    /* Counters */
+    .ctr{
+      display:flex; gap:6px; align-items:center;
+      border:1.5px solid #000; border-radius:999px; padding:3px 9px; background:#fff;
+    }
+    .ctr .lbl{ font-family:Cinzel,serif; font-size:.52rem; letter-spacing:.16em; text-transform:uppercase; color:#444; }
+    .boxes{ display:flex; gap:5px; }
+    .box{ width:13px; height:13px; border:1.5px solid #000; border-radius:3px; display:inline-block; background:#fff; }
+    .ctr .hint{ font-size:.72rem; color:#666; font-style:italic; }
+
+    /* Specials */
+    .spcard{ border:1.5px solid #000; border-radius:10px; padding:8px 11px; }
+    .sp-lbl{ font-family:Cinzel,serif; font-size:.57rem; letter-spacing:.1em; text-transform:uppercase; margin-bottom:3px; }
+    .sp-desc{ font-size:.78rem; line-height:1.4; color:#444; }
+    .card-desc a, .card-tech a, .sp-desc a { color: inherit; }
+
+    /* Mini timeline bottom — intégrée à la fiche */
+    .mini-turn{
+      border-top:1.5px solid #000; padding:7px 10px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .mini-line{
+      width:min(760px, 100%);
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:center;
+    }
+    .mini-title{
+      font-family:Cinzel,serif; font-size:.52rem; letter-spacing:.16em; text-transform:uppercase;
+      color:#666; margin-right:2px;
+    }
+    .mini-pill{
+      border:1px solid #bbb; border-radius:999px; padding:2px 8px; background:#fff;
+      font-family:Cinzel,serif; font-size:.52rem; letter-spacing:.12em; text-transform:uppercase; color:#444;
+    }
+    .mini-dot{ width:6px; height:6px; border-radius:50%; background:#000; opacity:.35; }
+
+    /* View toggle DL / DnD5e */
+    .view-toggle-bar{ display:flex; gap:0; border-bottom:1px solid rgba(255,255,255,.12); background:#1a1a1a; }
+    .view-btn{
+      -webkit-appearance:none; appearance:none;
+      font-family:Cinzel,serif; font-size:.58rem; letter-spacing:.12em; text-transform:uppercase;
+      padding:7px 18px; background:#eee; color:#666;
+      border:none; border-right:1px solid #ccc; cursor:pointer; transition:all .15s;
+    }
+    .view-btn.v-active{ background:#fff; color:#000; font-weight:700; }
+
+    /* Responsive */
+    @media (max-width: 720px){
+      .sheet-header{ grid-template-columns:1fr; }
+      .portrait-box{ min-height:140px; }
+      .sheet-body{ grid-template-columns:1fr; }
+      .sidebar{ border-right:none; border-bottom:2px solid #000; }
+      .cards2{ grid-template-columns:1fr; }
+    }
+
+    /* Print — nav masquée, mini-turn intégrée (non flottante) */
+    @media print{
+      #main-nav{ display:none !important; }
+      body{ background:#fff; padding:0; }
+      .tabs{ display:none; }
+      .sheet{ display:block !important; max-width:100%; margin:0; border:1.5px solid #000; border-radius:0; page-break-after:always; }
+      .mini-turn{ position:static; border-top:1.5px solid #000; background:#fff; }
+      .main-content{ padding-bottom:0; }
+    }
+
+    /* === NAV === */
+    #main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
+    .nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
+    .nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
+    .nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
+    .nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
+    .nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
+    .nav-links::-webkit-scrollbar{display:none;}
+    .nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
+    .nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
+    .nav-link.active{color:#fff;border-bottom-color:#fff;}
+    .nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
+    .nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+    .mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
+    .nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
+    @media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
+    .mj-only{display:none;}
+    body.mj-active .mj-only{display:block;}
+    .d5e-header-stats{margin-left:auto;display:flex;flex-direction:column;gap:6px;min-width:260px;}
+    @media(max-width:700px){.d5e-header-stats{width:100%;min-width:0;}}
+
+    /* === DARK MODE (écran uniquement — impression = light mode natif) === */
+    @media screen{
+      body{background:#111;color:#f0f0f0;padding:0;}
+      .tabs{padding:0 12px;margin-top:10px;}
+      .tab-btn{background:#252525;color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2);}
+      .tab-btn:hover{background:#2a2a2a;color:#f0f0f0;}
+      .tab-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;}
+      .sheet{background:#1a1a1a;border-color:rgba(255,255,255,.18);}
+      .sheet-header{border-bottom-color:rgba(255,255,255,.18);}
+      .portrait-box{background:#202020;border-color:rgba(255,255,255,.15);}
+      .portrait-ph{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5);}
+      .char-meta{color:rgba(255,255,255,.65);}
+      .align-pill{border-color:rgba(255,255,255,.15);}
+      .char-quote{color:rgba(255,255,255,.78);border-left-color:rgba(255,255,255,.2);}
+      .vitals-bento{border-color:rgba(255,255,255,.15);background:#1a1a1a;}
+      .vbox{border-color:rgba(255,255,255,.15);background:#1a1a1a;}
+      .vbox .l{color:rgba(255,255,255,.55);}
+      .alias{color:rgba(255,255,255,.5);}
+      .ico,.ico *{fill:rgba(255,255,255,.8);}
+      .sidebar{border-right-color:rgba(255,255,255,.18);}
+      .sk-title{border-bottom-color:rgba(255,255,255,.18);color:rgba(255,255,255,.85);}
+      .sec-title{border-bottom-color:rgba(255,255,255,.2);}
+      .sec-note{color:rgba(255,255,255,.5);}
+      .alabel{color:rgba(255,255,255,.55);}
+      .acircle{border-color:rgba(255,255,255,.15);}
+      .amod{color:rgba(255,255,255,.65);}
+      .skrow{color:rgba(255,255,255,.42);}
+      .skrow.p{color:#f0f0f0;}
+      .skrow.exp{color:#f0f0f0;}
+      .skrow .m{color:#f0f0f0;}
+      .skdot{border-color:rgba(255,255,255,.18);}
+      .skdot.f{background:#fff;border-color:#fff;}
+      .skdot.e{background:#fff;border-color:#fff;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #1a1a1a,0 0 0 5px #fff;}
+      .expnote{color:rgba(255,255,255,.42);}
+      .equip-title{border-bottom-color:rgba(255,255,255,.18);color:rgba(255,255,255,.85);}
+      .equip{color:rgba(255,255,255,.65);}
+      .coin-box{border-color:rgba(255,255,255,.15);}
+      .coin-lbl{color:rgba(255,255,255,.5);}
+      .coin-val{color:#f0f0f0;}
+      .print-btn-row{border-top-color:rgba(255,255,255,.18);}
+      .print-btn{background:transparent;border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.75);}
+      .print-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+      .card{border-color:rgba(255,255,255,.15);}
+      .card.pw{background:#202020;}
+      .card.innate{border-color:rgba(255,255,255,.3);background:#1a1a1a;}
+      .card.minor{border-color:rgba(255,255,255,.2);}
+      .card-right{color:rgba(255,255,255,.85);}
+      .card-desc{color:rgba(255,255,255,.65);}
+      .card-tech{border-top-color:rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+      .chip{border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.65);background:transparent;}
+      .chip.strong{border-color:rgba(255,255,255,.55);color:#f0f0f0;}
+      .chip.stat{border-color:rgba(255,255,255,.55);color:#f0f0f0;background:transparent;}
+      .ctr{border-color:rgba(255,255,255,.15);background:transparent;}
+      .ctr .lbl{color:rgba(255,255,255,.65);}
+      .ctr .hint{color:rgba(255,255,255,.5);}
+      .box{border-color:rgba(255,255,255,.15);background:transparent;}
+      .spcard{border-color:rgba(255,255,255,.15);}
+      .sp-desc{color:rgba(255,255,255,.65);}
+      .mini-turn{border-top-color:rgba(255,255,255,.18);}
+      .mini-title{color:rgba(255,255,255,.5);}
+      .mini-pill{border-color:rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);}
+      .mini-dot{background:rgba(255,255,255,.35);opacity:1;}
+      .view-toggle-bar{background:#1a1a1a;border-bottom-color:rgba(255,255,255,.1);}
+      .view-btn{background:#252525;border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.4);}
+      .view-btn.v-active{background:#333;color:#f0f0f0;border-color:rgba(255,255,255,.5);}
+      .view-btn:hover{border-color:rgba(255,255,255,.6);color:#fff;}
+    }
+
+      /* D&D classique */
+      .dnd5e-section { margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
+      .dnd5e-title { font-family: Cinzel, serif; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+      .dnd5e-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+      .dnd5e-box { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 6px; padding: 5px 8px; }
+      .dnd5e-lbl { font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 2px; }
+      .dnd5e-val { font-size: .78rem; color: rgba(255,255,255,.82); }
+      .dnd5e-text-box { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; }
+      .dnd5e-text-box .dnd5e-lbl { margin-bottom: 4px; }
+      .dnd5e-text-box .dnd5e-val { font-size: .78rem; line-height: 1.5; white-space: pre-wrap; }
+      .dnd5e-mait { display: flex; gap: 6px; flex-wrap: wrap; }
+      .dnd5e-mait-pill { background: rgba(255,255,255,.08); border-radius: 10px; padding: 2px 8px; font-size: .65rem; color: rgba(255,255,255,.7); }      /* â”€â”€ D&D 5e HTML view layout â”€â”€ */
+      /* â”€â”€ D&D 5e sheet layout (3 colonnes) â”€â”€ */
+      .d5e-header{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.15);margin-bottom:12px;}
+      .d5e-portrait{width:68px;height:68px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,.2);}
+      .d5e-identity{flex:1;min-width:0;}
+      .d5e-id-name{font-family:Cinzel,serif;font-size:1.1rem;font-weight:700;line-height:1.1;margin-bottom:3px;}
+      .d5e-id-meta{font-size:.72rem;color:rgba(255,255,255,.55);}
+      .d5e-id-align{display:inline-block;margin-top:5px;font-family:Cinzel,serif;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:2px 9px;color:rgba(255,255,255,.55);}
+      /* 3 colonnes */
+      .d5e-cols{display:flex;gap:8px;align-items:flex-start;}
+      .d5e-col-l{width:82px;flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
+      .d5e-col-m{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:7px;}
+      .d5e-col-r{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+      /* Bloc attribut (colonne gauche) */
+      .d5e-ab{border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:5px 3px;text-align:center;}
+      .d5e-ab-name{font-family:Cinzel,serif;font-size:.42rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:3px;}
+      .d5e-ab-circ{width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);margin:0 auto 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+      .d5e-ab-score{font-family:Cinzel,serif;font-size:.9rem;font-weight:700;line-height:1;}
+      .d5e-ab-mod{font-size:.55rem;color:rgba(255,255,255,.5);line-height:1.2;}
+      .d5e-ab-save{font-size:.58rem;color:rgba(255,255,255,.45);margin-top:3px;padding-top:3px;border-top:1px solid rgba(255,255,255,.1);}
+      .d5e-ab-save.p{color:rgba(255,255,255,.88);font-weight:600;}
+      /* Mini boxes (inspiration + maÃ®trise) */
+      .d5e-minis{display:flex;gap:4px;}
+      .d5e-mini{flex:1;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:4px 2px;text-align:center;}
+      .d5e-mini-v{font-family:Cinzel,serif;font-size:.82rem;font-weight:700;line-height:1;}
+      .d5e-mini-l{font-size:.4rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:1px;}
+      /* Boite gÃ©nÃ©rique avec header */
+      .d5e-box{border:1px solid rgba(255,255,255,.18);border-radius:6px;overflow:hidden;}
+      .d5e-box-hd{font-family:Cinzel,serif;font-size:.44rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:3px 7px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);}
+      .d5e-box-bd{padding:5px 7px;}
+      /* Skills 2-col */
+      .d5e-sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 4px;}
+      /* Stats combat (top droite) */
+      .d5e-cstats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+      .d5e-cs{border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:6px 3px;text-align:center;}
+      .d5e-cs-v{font-family:Cinzel,serif;font-size:1.05rem;font-weight:700;line-height:1;}
+      .d5e-cs-l{font-size:.44rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:2px;}
+      /* PV */
+      .d5e-pv-row{display:flex;gap:4px;}
+      .d5e-pv-cell{flex:1;border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:5px 3px;text-align:center;}
+      .d5e-pv-v{font-family:Cinzel,serif;font-size:1rem;font-weight:700;line-height:1;}
+      .d5e-pv-l{font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:2px;}
+      /* DÃ©s de vie + jets mort */
+      .d5e-ddr{display:flex;gap:6px;}
+      .d5e-ddr-b{flex:1;}
+      .d5e-ddr-lbl{font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:3px;}
+      .d5e-dots{display:flex;gap:3px;flex-wrap:wrap;}
+      .d5e-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.22);}
+      .d5e-dot.s{background:#5a9e5a;border-color:#5a9e5a;}
+      .d5e-dot.f{background:#9e5a5a;border-color:#9e5a5a;}
+      .d5e-dot.ck{cursor:pointer;}
+      .d5e-dot.ck:hover{transform:scale(1.35);transition:transform .1s;}
+      .d5e-insp{cursor:pointer;user-select:none;}
+      .d5e-insp:hover{opacity:.65;}
+      /* Attaques */
+      .d5e-atk{width:100%;border-collapse:collapse;font-size:.75rem;}
+      .d5e-atk th{font-family:Cinzel,serif;font-size:.42rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.38);text-align:left;padding:2px 4px;border-bottom:1px solid rgba(255,255,255,.1);}
+      .d5e-atk td{padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);}
+      /* Textes */
+      .d5e-txt{font-size:.76rem;line-height:1.6;white-space:pre-wrap;color:rgba(255,255,255,.75);}
+      .d5e-ml{font-size:.76rem;line-height:1.75;}
+      /* Sorts */
+      .d5e-sbar{font-family:Cinzel,serif;font-size:.52rem;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:4px;}
+      .d5e-srow{display:flex;gap:5px;font-size:.73rem;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+      .d5e-sn{font-family:Cinzel,serif;font-size:.58rem;font-weight:600;min-width:52px;flex-shrink:0;color:rgba(255,255,255,.55);}
+      /* PersonnalitÃ© */
+      .d5e-tgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+      .d5e-tbox{border:1px solid rgba(255,255,255,.12);border-left:2px solid #c87a15;border-radius:0 5px 5px 0;padding:5px 8px;}
+      .d5e-tlbl{font-family:Cinzel,serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:2px;}
+      .d5e-tval{font-size:.75rem;line-height:1.45;}
+      /* Responsive */
+      @media(max-width:700px){.d5e-cols{flex-wrap:wrap;}.d5e-col-l{width:100%;flex-direction:row;flex-wrap:wrap;gap:4px;}.d5e-ab{flex:1;min-width:calc(33% - 4px);}.d5e-col-m{width:100%;}.d5e-cstats{grid-template-columns:repeat(2,1fr);}.d5e-tgrid{grid-template-columns:1fr;}}
+        /* â”€â”€ View Toggle â”€â”€ */
+    .view-toggle-bar{display:flex;align-items:center;padding:6px 16px;gap:6px;background:#1a1a1a;border-bottom:1px solid rgba(255,255,255,.1);}
+    .view-btn{font-family:Cinzel,serif;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:transparent;border:1.5px solid #bbb;border-radius:20px;cursor:pointer;color:#888;transition:all .15s;}
+    .view-btn:hover{border-color:#333;color:#000;}
+    .view-btn.v-active{background:#3a2a0e;color:#c87a15;border-color:#8B6914;}
+    /* â”€â”€ D&D 5e â€” sorts â”€â”€ */
+    .d5-sorts{display:flex;flex-direction:column;gap:3px;}
+    .d5-sort-bar{font-family:Cinzel,serif;font-size:.6rem;font-weight:600;margin-bottom:4px;}
+    .d5-sort-row{display:flex;gap:8px;font-size:.78rem;padding-bottom:2px;border-bottom:1px solid #eee;}
+    .d5-sort-n{font-weight:700;min-width:65px;flex-shrink:0;color:#555;}
+    /* â”€â”€ D&D 5e â€” maÃ®trises & description â”€â”€ */
+    .d5-mait{display:flex;flex-direction:column;gap:4px;}
+    .d5-mait-line{font-size:.8rem;}
+    .d5-desc{display:flex;flex-direction:column;gap:6px;}
+    .d5-desc-block{border-left:2px solid #000;padding-left:8px;}
+    .d5-desc-lbl{font-family:Cinzel,serif;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:2px;}
+    @media(prefers-color-scheme:dark){
+      .view-toggle-bar{background:rgba(255,255,255,.04);border-bottom-color:rgba(255,255,255,.1);}
+      .view-btn{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.4);}
+      .view-btn:hover{border-color:rgba(255,255,255,.6);color:#fff;}
+      .view-btn.v-active{background:#3a2a0e;color:#c87a15;border-color:#8B6914;}
+      .d5-sort-bar{color:#f0f0f0;}
+      .d5-sort-n{color:rgba(255,255,255,.5);}
+      .d5-sort-row{border-bottom-color:rgba(255,255,255,.1);}
+      .d5-mait-line{color:rgba(255,255,255,.7);}
+      .d5-desc-block{border-left-color:rgba(255,255,255,.2);}
+      .d5-desc-lbl{color:rgba(255,255,255,.4);}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tabs" id="tabs-container" role="tablist" aria-label="Personnages"></div>
+  <div id="sheets-container"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    // ── Mappings compétences ──
+    const SKILL_ATTR = {
+      'Acrobaties':'DEX','Arcanes':'INT','Athlétisme':'FOR',
+      'Discrétion':'DEX','Dressage':'SAG','Escamotage':'DEX',
+      'Histoire':'INT','Intimidation':'CHA','Investigation':'INT',
+      'Médecine':'SAG','Nature':'INT','Perception':'SAG',
+      'Perspicacité':'SAG','Persuasion':'CHA','Religion':'INT',
+      'Représentation':'CHA','Survie':'SAG','Tromperie':'CHA'
+    };
+    const ALL_SKILLS = [
+      'Acrobaties','Arcanes','Athlétisme','Discrétion','Dressage',
+      'Escamotage','Histoire','Intimidation','Investigation','Médecine','Nature',
+      'Perception','Perspicacité','Persuasion','Religion','Représentation','Survie','Tromperie'
+    ];
+    const ATTR_NAMES = {
+      'FOR':'Force','DEX':'Dextérité','CON':'Constitution',
+      'INT':'Intelligence','SAG':'Sagesse','CHA':'Charisme'
+    };
+
+    // ── SVG icons ──
+    const SVG_HEART       = `<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-8.7C.6 8.9 2.4 5.8 5.7 5.2c1.7-.3 3.4.4 4.3 1.7.9-1.3 2.6-2 4.3-1.7 3.3.6 5.1 3.7 3.2 7.1C19 16.4 12 21 12 21z"/></svg>`;
+    const SVG_SHIELD      = `<svg viewBox="0 0 24 24"><path d="M12 2l6 3v5c0 6-3 10-6 12-3-2-6-6-6-12V5l6-3z"/></svg>`;
+    const SVG_WALK        = `<svg viewBox="0 0 24 24"><path d="M9 5a2 2 0 104 0 2 2 0 00-4 0z"/><path d="M10 8l-2 4 2 2-1 6h2l1-5 2 2 2-1-3-3 1-4z"/></svg>`;
+    const SVG_STAR        = `<svg viewBox="0 0 24 24"><path d="M12 2l2.8 6.2L22 9l-5 4.4L18.4 21 12 17.6 5.6 21 7 13.4 2 9l7.2-.8L12 2z"/></svg>`;
+    const SVG_DIAMOND     = `<svg viewBox="0 0 24 24"><path d="M12 2l8 8-8 12L4 10l8-8z"/></svg>`;
+    const SVG_MORTARBOARD = `<svg viewBox="0 0 24 24"><path d="M4 10l8-6 8 6-8 4-8-4z"/><path d="M6 12v6h12v-6l-6 3-6-3z"/></svg>`;
+    const SVG_EYE         = `<svg viewBox="0 0 24 24"><path d="M12 5C7 5 2.7 8.6 1 12c1.7 3.4 6 7 11 7s9.3-3.6 11-7c-1.7-3.4-6-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
+    // ── Helpers ──
+    function sign(n){ return n >= 0 ? '+' + n : '' + n; }
+
+    function ddToStars(n){
+      const labels=['très facile','facile','moyen','difficile','très difficile','exceptionnel','légendaire'];
+      const idx = n<=8?0 : n<=10?1 : n<=12?2 : n<=14?3 : n<=16?4 : n<=18?5 : 6;
+      return {stars:idx+1, label:labels[idx]};
+    }
+
+    function vbox(svg, lbl, val, alias){
+      return `<div class="vbox">
+        <div class="top"><span class="ico" aria-hidden="true">${svg}</span><span class="l">${lbl}</span></div>
+        <span class="v">${val}</span><span class="alias">${alias}</span>
+      </div>`;
+    }
+
+    function chipCls(c){
+      if(c.startsWith('Jet') || c.startsWith('DD')) return 'chip strong';
+      if(c.startsWith('STAT')) return 'chip stat';
+      return 'chip';
+    }
+
+    function mkChips(arr){
+      if(!arr || !arr.length) return '';
+      return arr.map(c => {
+        const ddM = c.match(/^DD\s*:?\s*(\d+)$/i);
+        if(ddM){
+          const {stars, label} = ddToStars(parseInt(ddM[1]));
+          const filled = '★'.repeat(stars);
+          const empty  = '☆'.repeat(7-stars);
+          return `<span class="chip chip-dd" title="DD ${ddM[1]} — ${label}">${filled}${empty}</span>`;
+        }
+        return `<span class="${chipCls(c)}">${c}</span>`;
+      }).join('');
+    }
+
+    function mkBoxes(n){ return Array(n).fill('<span class="box"></span>').join(''); }
+
+    function ctrHtml(n, hint, inline){
+      if(!n) return '';
+      const style = inline ? '' : ' style="justify-content:flex-end"';
+      return `<div class="meta-line"${style}>
+        <span class="ctr" title="Rechargement : ${hint || ''}">
+          <span class="lbl">Compteur</span>
+          <span class="boxes" aria-label="${n} au total">${mkBoxes(n)}</span>
+          <span class="hint">${hint || ''}</span>
+        </span>
+      </div>`;
+    }
+
+    // Carte Attaque (champs séparés jet/stat/type)
+    function attCard(att){
+      const chips = [];
+      if(att.jet)  chips.push(`<span class="chip strong">Jet : ${att.jet}</span>`);
+      if(att.stat) chips.push(`<span class="chip stat">STAT : ${att.stat}</span>`);
+      if(att.type) chips.push(`<span class="chip">Type : ${att.type}</span>`);
+      const meta = chips.length ? `<div class="meta-line">${chips.join('')}</div>` : '';
+      const desc = att.description ? `<div class="card-desc">${att.description}</div>` : '';
+      const tech = att.regle ? `<div class="card-tech">${att.regle}</div>` : '';
+      const mjCls = att.visible_joueurs === false ? ' mj-only' : '';
+      return `<div class="card${mjCls}">
+        <div class="card-h"><div class="card-n">${att.nom}</div><div class="card-right">${att.valeur || '—'}</div></div>
+        ${meta}${desc}${tech}
+      </div>`;
+    }
+
+    // Carte générique (sort, capacité, passif)
+    function chipCard(item, extraCls, inlineCtr){
+      const val  = item.valeur || '—';
+      const meta = item.chips && item.chips.length
+        ? `<div class="meta-line">${mkChips(item.chips)}</div>` : '';
+      const desc = item.description ? `<div class="card-desc">${item.description}</div>` : '';
+      const tech = item.regle ? `<div class="card-tech">${item.regle}</div>` : '';
+      const ctr  = inlineCtr && item.utilisations
+        ? ctrHtml(item.utilisations, item.recharge, true) : '';
+      const mjCls = item.visible_joueurs === false ? ' mj-only' : '';
+      return `<div class="card${extraCls ? ' ' + extraCls : ''}${mjCls}">
+        <div class="card-h"><div class="card-n">${item.nom}</div><div class="card-right">${val}</div></div>
+        ${meta}${desc}${tech}${ctr}
+      </div>`;
+    }
+
+
+    // ── Section D&D classique (optionnelle) ──────────────────────────────────
+    function buildDndClassiqueSection(pj) {
+      const DC_FIELDS = ['age','taille','poids','yeux','peau','cheveux','langues',
+        'maitrise_armures','maitrise_armes','maitrise_outils',
+        'traits_perso','ideaux','liens','defauts','histoire'];
+      if (!DC_FIELDS.some(k => pj[k])) return '';
+      const box = (lbl, val) => val
+        ? `<div class="dnd5e-box"><div class="dnd5e-lbl">${lbl}</div><div class="dnd5e-val">${val}</div></div>`
+        : '';
+      const txtBox = (lbl, val) => val
+        ? `<div class="dnd5e-text-box"><div class="dnd5e-lbl">${lbl}</div><div class="dnd5e-val">${val}</div></div>`
+        : '';
+      const maitPill = val => val
+        ? `<span class="dnd5e-mait-pill">${val}</span>`
+        : '';
+
+      const apparence = [
+        box('Âge', pj.age), box('Taille', pj.taille), box('Poids', pj.poids),
+        box('Yeux', pj.yeux), box('Peau', pj.peau), box('Cheveux', pj.cheveux),
+      ].filter(Boolean).join('');
+
+      const maitBlock = [pj.maitrise_armures, pj.maitrise_armes, pj.maitrise_outils]
+        .filter(Boolean).map(maitPill).join('');
+
+      return `<div class="dnd5e-section">
+        <div class="dnd5e-title">Données D&D</div>
+        ${apparence ? `<div class="dnd5e-grid">${apparence}</div>` : ''}
+        ${pj.langues ? `<div class="dnd5e-text-box"><div class="dnd5e-lbl">Langues</div><div class="dnd5e-val">${pj.langues}</div></div>` : ''}
+        ${txtBox('Traits de personnalité', pj.traits_perso)}
+        ${txtBox('Idéaux', pj.ideaux)}
+        ${txtBox('Liens', pj.liens)}
+        ${txtBox('Défauts', pj.defauts)}
+        ${txtBox('Histoire', pj.histoire)}
+        ${maitBlock ? `<div class="dnd5e-text-box"><div class="dnd5e-lbl">Maîtrises</div><div class="dnd5e-mait">${maitBlock}</div></div>` : ''}
+      </div>`;
+    }
+
+    // ── Construction d'une fiche complète ──
+    function buildSheet(pj, isFirst){
+      const initVal  = pj.initiative || 0;
+      const initSign = sign(initVal);
+      const vitNum   = parseInt(pj.vitesse) || 0;
+      const cases    = vitNum > 0 ? Math.round(vitNum / 1.5) + ' cases' : '';
+      const bestSave = pj.jets_sauvegarde && pj.jets_sauvegarde.length
+        ? Math.max(...pj.jets_sauvegarde.map(a => pj.attributs[a].mod + pj.bonus_maitrise))
+        : 0;
+      const sagMod      = (pj.attributs?.SAG?.mod) || 0;
+      const percEntry   = (pj.competences||[]).find(c => c.nom === 'Perception');
+      const passivePerc = 10 + (percEntry ? percEntry.bonus : sagMod);
+
+      const alignment = pj.alignement || (pj.traits && pj.traits[0] ? pj.traits[0] : '');
+      const meta      = `${pj.race} \u2014 ${pj.classe} \u2014 Niveau ${pj.niveau}`;
+
+      // Portrait : image si dispo, sinon placeholder
+      const portrait = pj.portrait_url
+        ? `<img src="${pj.portrait_url}" class="portrait-img" alt="Portrait de ${pj.nom}">`
+        : `<div class="portrait-ph">Portrait<br>à venir</div>`;
+
+      const header = `<header class="sheet-header">
+        <div class="portrait-box">${portrait}</div>
+        <div class="identity">
+          <div class="char-name">${pj.nom}</div>
+          <div class="char-meta">${meta}</div>
+          <div class="align-pill">${alignment}</div>
+          <div class="char-quote">\u00AB\u202F${pj.citation}\u202F\u00BB</div>
+        </div>
+        <div class="vitals-bento" aria-label="Stats clés">
+          ${vbox(SVG_HEART,       'PV',          pj.pv_max,                'HP')}
+          ${vbox(SVG_SHIELD,      'CA',          pj.ca,                    'AC')}
+          ${vbox(SVG_WALK,        'Vitesse',     pj.vitesse,               cases)}
+          ${vbox(SVG_STAR,        'Initiative',  initSign,                 'd20' + initSign)}
+          ${vbox(SVG_DIAMOND,     'Résistance',  sign(bestSave),           'sauvegarde')}
+          ${vbox(SVG_MORTARBOARD, 'Maîtrise',    sign(pj.bonus_maitrise),  'Prof.')}
+          ${vbox(SVG_EYE,         'Perception',  passivePerc,              'passive')}
+        </div>
+      </header>`;
+
+      // Sidebar — Attributs
+      const attrRows = Object.entries(ATTR_NAMES).map(([key, lbl]) => {
+        const a = pj.attributs[key];
+        return `<div class="arow"><span class="alabel">${lbl}</span>
+          <div class="acircle"><div class="ascore">${a.val}</div><div class="amod">${sign(a.mod)}</div></div>
+        </div>`;
+      }).join('');
+
+      // Sidebar — Compétences (format sparse)
+      const profMap = {};
+      (pj.competences || []).forEach(c => { profMap[c.nom] = c; });
+      const skillRows = ALL_SKILLS.map(skill => {
+        const attr  = SKILL_ATTR[skill];
+        const base  = pj.attributs[attr].mod;
+        const prof  = profMap[skill];
+        let cls = 'skrow', dotCls = 'skdot', bonus = base;
+        if(prof){
+          bonus = prof.bonus;
+          if(prof.expertise){ cls = 'skrow exp'; dotCls = 'skdot e'; }
+          else               { cls = 'skrow p';   dotCls = 'skdot f'; }
+        }
+        return `<div class="${cls}"><span class="${dotCls}"></span><span class="m">${sign(bonus)}</span> ${skill}</div>`;
+      }).join('');
+
+      // Sidebar — Équipement
+      const equipHtml = (pj.equipement || []).join('<br>');
+      // Argent
+      const COINS = [['PP','pp'],['PO','po'],['PE','pe'],['PA','pa'],['PC','pc']];
+      const argObj = pj.argent || {};
+      const argentHtml = '<div class="argent-row">' + COINS.map(([l,k]) => '<div class="coin-box"><span class="coin-lbl">' + l + '</span><span class="coin-val">' + (argObj[k] || '_') + '</span></div>').join('') + '</div>';
+
+      const sidebar = `<aside class="sidebar">
+        <div>
+          <div class="sk-title">Attributs</div>
+          <div class="attrs">${attrRows}</div>
+        </div>
+        <div>
+          <div class="sk-title">Compétences</div>
+          <div class="sklist">${skillRows}</div>
+          <div class="expnote">● vide = pas de maîtrise • ● plein = maîtrise • double = expertise</div>
+        </div>
+        <div>
+          <div class="equip-title">Équipement</div>
+          <div class="equip">${equipHtml}</div>
+          ${argentHtml}
+        </div>
+      </aside>`;
+
+      // Main content
+      let main = '';
+
+      // Attaques
+      if(pj.attaques && pj.attaques.length){
+        const cards = pj.attaques.map(a => attCard(a)).join('');
+        main += `<section>
+          <div class="sec-title">Attaques <span class="sec-note">Action : d20+bonus, puis dégâts</span></div>
+          <div class="cards2">${cards}</div>
+        </section>`;
+      }
+
+      // Sorts mineurs (compteur par carte)
+      if(pj.sorts_mineurs && pj.sorts_mineurs.length){
+        const fs   = pj.sorts_mineurs[0];
+        const note = fs.utilisations ? `${fs.utilisations}\u202F/\u202Fsort\u202F/\u202F${fs.recharge || 'combat'}` : '';
+        const cards = pj.sorts_mineurs.map(s => chipCard(s, 'minor', true)).join('');
+        main += `<section>
+          <div class="sec-title">Sorts mineurs${note ? ' <span class="sec-note">' + note + '</span>' : ''}</div>
+          <div class="cards2">${cards}</div>
+        </section>`;
+      }
+
+      // Capacités puissantes (compteur partagé en bas de section)
+      if(pj.capacites && pj.capacites.length){
+        const fc    = pj.capacites[0];
+        const note  = fc.utilisations ? `${fc.utilisations} utilisations au total` : '';
+        const cards = pj.capacites.map(c => chipCard(c, 'pw', false)).join('');
+        const shCtr = fc.utilisations ? ctrHtml(fc.utilisations, fc.recharge, false) : '';
+        main += `<section>
+          <div class="sec-title"><span>Capacités puissantes</span>${note ? '<span class="sec-note">' + note + '</span>' : ''}</div>
+          <div class="cards">${cards}</div>
+          ${shCtr}
+        </section>`;
+      }
+
+      // Capacités passives / innates
+      if(pj.passifs && pj.passifs.length){
+        const cards = pj.passifs.map(p => chipCard(p, 'innate', false)).join('');
+        main += `<section>
+          <div class="sec-title">Capacités passives</div>
+          <div class="cards">${cards}</div>
+        </section>`;
+      }
+
+      // Bonus & Réactions
+      if(pj.actions_bonus || pj.reaction){
+        let spc = '';
+        if(pj.actions_bonus) spc += `<div class="spcard"><div class="sp-lbl">Action bonus</div><div class="sp-desc">${pj.actions_bonus}</div></div>`;
+        if(pj.reaction)      spc += `<div class="spcard"><div class="sp-lbl">Réaction</div><div class="sp-desc">${pj.reaction}</div></div>`;
+        main += `<section>
+          <div class="sec-title">Bonus &amp; Réactions <span class="sec-note">1 par tour</span></div>
+          <div class="cards2">${spc}</div>
+        </section>`;
+      }
+
+      // Section D&D classique optionnelle
+      const dnd5eSection = buildDndClassiqueSection(pj);
+      if (dnd5eSection) main += dnd5eSection;
+
+      // Notes MJ (MJ uniquement)
+      if ((pj.notes_mj||[]).length) {
+        const nmjBlocks = (pj.notes_mj||[]).map(n =>
+          `<div class="dnd5e-text-box"><div class="dnd5e-lbl">${n.titre||''}</div><div class="dnd5e-val">${n.contenu||''}</div></div>`
+        ).join('');
+        main += `<section class="mj-only"><div class="sec-title">Notes MJ</div>${nmjBlocks}</section>`;
+      }
+
+      // Mini-turn footer — partie intégrante de la fiche (non flottant)
+      const mini = `<div class="mini-turn">
+        <div class="mini-line">
+          <span class="mini-title">Rappel d'un tour</span>
+          <span class="mini-pill">1 Déplacement</span><span class="mini-dot"></span>
+          <span class="mini-pill">2 Action</span><span class="mini-dot"></span>
+          <span class="mini-pill">3 Bonus</span><span class="mini-dot"></span>
+          <span class="mini-pill">4 Réaction</span>
+        </div>
+      </div>`;
+
+      return `<div class="sheet${isFirst ? ' active' : ''}" id="${pj.id}">
+        <div class="view-toggle-bar">
+          <button class="view-btn v-active" onclick="switchView('${pj.id}','dl')">Dungeon Lite</button>
+          <button class="view-btn" onclick="switchView('${pj.id}','dnd5e')">D&amp;D 5e</button>
+        </div>
+        <div class="v-dl">
+          ${header}
+          <div class="sheet-body">
+            ${sidebar}
+            <main class="main-content">${main}</main>
+          </div>
+          ${mini}
+        </div>
+        <div class="v-dnd5e" style="display:none">${buildDnd5eView(pj)}</div>
+        <div class="print-btn-row">
+          <button class="print-btn" onclick="window.open('pdf/${pj.id}.pdf','_blank')">Imprimer (PDF) &#x2197;</button>
+          <button class="print-btn" style="margin-left:8px;background:#3a2a0e;border-color:#8B6914" onclick="openDnd5ePDF('${pj.id}')">Imprimer (D&amp;D 5e) &#x2197;</button>
+        </div>
+      </div>`;
+    }
+
+    // ── Navigation onglets ──
+    function showTab(id, btn){
+      document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const el = document.getElementById(id);
+      if(el) el.classList.add('active');
+      btn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Initialisation ──
+    let PJ_DATA = [];
+    async function init(){
+      try {
+        const raw = await loadData('personnages.json');
+        if(!raw || !raw.length) return;
+        PJ_DATA = raw;
+        const tabsEl   = document.getElementById('tabs-container');
+        const sheetsEl = document.getElementById('sheets-container');
+        const pjs = getMJMode() ? PJ_DATA : PJ_DATA.filter(pj => pj.visible_joueurs !== false);
+        pjs.forEach((pj, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+          btn.textContent = pj.nom.split(' ')[0];
+          btn.onclick = () => showTab(pj.id, btn);
+          tabsEl.appendChild(btn);
+          sheetsEl.insertAdjacentHTML('beforeend', buildSheet(pj, i === 0));
+        });
+        // Re-appliquer le mode MJ sur les éléments .mj-only injectés dynamiquement
+        if(typeof applyMJMode === 'function') applyMJMode(getMJMode());
+      } catch(e){
+        console.error('Erreur chargement personnages.json :', e);
+        document.getElementById('sheets-container').innerHTML =
+          '<p style="color:#c00;padding:20px;font-family:Cinzel,serif;font-size:.8rem;">Impossible de charger les personnages.</p>';
+      }
+    }
+
+    (function(){ const _o=window.setMJMode; window.setMJMode=function(v){_o(v); if(PJ_DATA&&PJ_DATA.length){ document.getElementById('tabs-container').innerHTML=''; document.getElementById('sheets-container').innerHTML=''; init(); } }; })();    // â”€â”€ Bascule de vue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function switchView(id, view) {
+      const sheet = document.getElementById(id);
+      sheet.querySelector('.v-dl').style.display   = view === 'dl'    ? '' : 'none';
+      sheet.querySelector('.v-dnd5e').style.display = view === 'dnd5e' ? '' : 'none';
+      sheet.querySelectorAll('.view-btn').forEach((b,i) =>
+        b.classList.toggle('v-active', (i===0)===(view==='dl')));
+    }
+
+    // â”€â”€ Ouverture PDF D&D 5e (avec vÃ©rif existence) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function openDnd5ePDF(id) {
+      const url = 'pdf/' + id + '_dnd5e.pdf';
+      const r = await fetch(url, {method:'HEAD'}).catch(()=>null);
+      if (!r || !r.ok) {
+        alert('Fiche D\u0026D 5e non encore g\u00e9n\u00e9r\u00e9e.\nG\u00e9n\u00e9rez-la depuis l\u2019admin.');
+        return;
+      }
+      window.open(url, '_blank');
+    }
+
+    // â”€â”€ Vue D&D 5e â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function getD5eSess(id) {
+      try { return JSON.parse(localStorage.getItem('d5e_s_'+getCampaignId()+'_'+id)) || {}; } catch(e) { return {}; }
+    }
+    function saveD5eSess(id, s) {
+      localStorage.setItem('d5e_s_'+getCampaignId()+'_'+id, JSON.stringify(s));
+    }
+    function toggleInsp(id) {
+      var s = getD5eSess(id); s.insp = !s.insp; saveD5eSess(id, s);
+      var el = document.getElementById('d5e_insp_'+id);
+      if (el) el.textContent = s.insp ? '\u2605' : '\u2606';
+    }
+    function toggleD5eHD(id, idx) {
+      var s = getD5eSess(id), cur = s.hd !== undefined ? s.hd : 0;
+      s.hd = idx < cur ? idx : idx + 1; saveD5eSess(id, s);
+      var c = document.getElementById('d5e_hd_'+id);
+      if (c) c.querySelectorAll('.d5e-dot').forEach(function(d,i){ d.classList.toggle('f', i<s.hd); });
+    }
+    function toggleD5eJCM(id, type, idx) {
+      var s = getD5eSess(id), k = type==='s' ? 'jcmS' : 'jcmF', cur = s[k]!==undefined ? s[k] : 0;
+      s[k] = idx < cur ? idx : idx+1; saveD5eSess(id, s);
+      var c = document.getElementById('d5e_'+type+'_'+id);
+      if (c) c.querySelectorAll('.d5e-dot').forEach(function(d,i){ d.classList.toggle(type==='s' ? 's' : 'f', i<s[k]); });
+    }
+    function buildDnd5eView(pj) {
+      const attr  = pj.attributs || {};
+      const bm    = Number(pj.bonus_maitrise) || 2;
+      const dc    = pj; // champs migres au niveau racine
+      const sprof = pj.jets_sauvegarde || [];
+      function am(k){ return Number((attr[k]||{}).mod)||0; }
+      function av(k){ return Number((attr[k]||{}).val)||10; }
+      const profMap = {};
+      (pj.competences||[]).forEach(c => { profMap[c.nom] = c; });
+      const jack = Number(pj.niveau)>=2 && String(pj.classe||'').includes('Barde');
+      const percComp = profMap['Perception'];
+      const percB = percComp ? Number(percComp.bonus||0) : (am('SAG')+(jack?Math.floor(bm/2):0));
+      const initV = sign(Number(pj.initiative!=null ? pj.initiative : am('DEX')));
+
+      const _sid     = pj.id||pj.nom||'';
+      const _sess    = getD5eSess(_sid);
+      const inspSess = _sess.insp !== undefined ? _sess.insp : !!pj.inspiration;
+
+      // â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      const portrait = pj.portrait_url
+        ? `<img class="d5e-portrait" src="${pj.portrait_url}" alt="" onerror="this.style.display='none'">`
+        : `<div class="d5e-portrait"></div>`;
+      const metaParts = [pj.classe, pj.niveau ? 'Niv.\u00a0'+pj.niveau : '', pj.race].filter(Boolean);
+      const header = `<div class="d5e-header">
+        ${portrait}
+        <div class="d5e-identity">
+          <div class="d5e-id-name">${pj.nom||''}</div>
+          <div class="d5e-id-meta">${metaParts.join('\u00a0\u00b7\u00a0')}</div>
+          ${dc.alignement ? `<span class="d5e-id-align">${dc.alignement}</span>` : ''}
+        </div>
+        <div class="d5e-header-stats">
+          <div class="d5e-cstats">
+            <div class="d5e-cs"><div class="d5e-cs-v">${pj.ca||'\u2014'}</div><div class="d5e-cs-l">CA</div></div>
+            <div class="d5e-cs"><div class="d5e-cs-v">${initV}</div><div class="d5e-cs-l">Initiative</div></div>
+            <div class="d5e-cs"><div class="d5e-cs-v">${pj.vitesse||'\u2014'}</div><div class="d5e-cs-l">Vitesse</div></div>
+            <div class="d5e-cs"><div class="d5e-cs-v">${10+percB}</div><div class="d5e-cs-l">Perc. passive</div></div>
+          </div>
+          <div class="d5e-box" style="margin:0"><div class="d5e-box-hd">Points de vie</div>
+            <div class="d5e-box-bd"><div class="d5e-pv-row">
+              <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_max||'\u2014'}</div><div class="d5e-pv-l">Max</div></div>
+              <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_actuels!=null?pj.pv_actuels:'\u2014'}</div><div class="d5e-pv-l">Actuels</div></div>
+              <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_temp||'\u2014'}</div><div class="d5e-pv-l">Temp.</div></div>
+            </div></div>
+          </div>
+        </div>
+      </div>`;
+
+      // â”€â”€ Colonne gauche : 6 blocs attributs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      const ATTRS6 = ['FOR','DEX','CON','INT','SAG','CHA'];
+      const attrBlocks = ATTRS6.map(k => {
+        const p = sprof.includes(k);
+        return `<div class="d5e-ab">
+          <div class="d5e-ab-name">${ATTR_NAMES[k]}</div>
+          <div class="d5e-ab-circ">
+            <div class="d5e-ab-score">${av(k)}</div>
+            <div class="d5e-ab-mod">${sign(am(k))}</div>
+          </div>
+          <div class="d5e-ab-save${p?' p':''}">${p?'\u25c6':'\u25c7'}\u00a0${sign(am(k)+(p?bm:0))}</div>
+        </div>`;
+      }).join('');
+      const minis = `<div class="d5e-minis">
+        <div class="d5e-mini"><div class="d5e-mini-v d5e-insp" id="d5e_insp_${_sid}" onclick="toggleInsp('${_sid}')">${inspSess?'\u2605':'\u2606'}</div><div class="d5e-mini-l">Insp.</div></div>
+        <div class="d5e-mini"><div class="d5e-mini-v">+${bm}</div><div class="d5e-mini-l">Ma\u00eet.</div></div>
+      </div>`;
+      const colL = `<div class="d5e-col-l">${attrBlocks}${minis}</div>`;
+
+      // â”€â”€ Colonne centrale : sauvegardes + compÃ©tences â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      const saveRows = ATTRS6.map(k => {
+        const p = sprof.includes(k);
+        return `<div class="skrow${p?' p':''}"><span class="skdot${p?' f':''}"></span><span class="m">${sign(am(k)+(p?bm:0))}</span> ${ATTR_NAMES[k]}</div>`;
+      }).join('');
+
+      const skillItems = ALL_SKILLS.map(skill => {
+        const ak = SKILL_ATTR[skill]||'INT';
+        const base2 = am(ak);
+        const prof = profMap[skill];
+        let cls='', dot='', bonus=base2;
+        if(jack && !prof) bonus=base2+Math.floor(bm/2);
+        if(prof){
+          bonus=prof.bonus;
+          if(prof.expertise){cls=' exp';dot=' e';}
+          else              {cls=' p';  dot=' f';}
+        }
+        return `<div class="skrow${cls}"><span class="skdot${dot}"></span><span class="m">${sign(bonus)}</span> ${skill}</div>`;
+      }).join('');
+
+      // Stats combat
+      const cstats = `<div class="d5e-cstats">
+        <div class="d5e-cs"><div class="d5e-cs-v">${pj.ca||'\u2014'}</div><div class="d5e-cs-l">CA</div></div>
+        <div class="d5e-cs"><div class="d5e-cs-v">${initV}</div><div class="d5e-cs-l">Initiative</div></div>
+        <div class="d5e-cs"><div class="d5e-cs-v">${pj.vitesse||'\u2014'}</div><div class="d5e-cs-l">Vitesse</div></div>
+        <div class="d5e-cs"><div class="d5e-cs-v">${10+percB}</div><div class="d5e-cs-l">Perc. passive</div></div>
+      </div>`;
+
+      const hdTotal = Number(pj.niveau)||1;
+      const hdDie   = dc.de_vie||'d8';
+      const hdUsed  = _sess.hd   !== undefined ? _sess.hd   : (Number(pj.des_vie_utilises)||0);
+      const jcmS    = _sess.jcmS !== undefined ? _sess.jcmS : (Number(pj.jcm_succes)||0);
+      const jcmF    = _sess.jcmF !== undefined ? _sess.jcmF : (Number(pj.jcm_echecs)||0);
+      const mkHD = (n, used) =>
+        `<div class="d5e-dots" id="d5e_hd_${_sid}">${Array.from({length:n},(_,i)=>
+          `<span class="d5e-dot ck${i<used?' f':''}" onclick="toggleD5eHD('${_sid}',${i})"></span>`).join('')}</div>`;
+      const mkJCM = (used, cls) =>
+        `<div class="d5e-dots" id="d5e_${cls}_${_sid}">${Array.from({length:3},(_,i)=>
+          `<span class="d5e-dot ck${i<used?' '+cls:''}" onclick="toggleD5eJCM('${_sid}','${cls}',${i})"></span>`).join('')}</div>`;
+      const diceRow = `<div class="d5e-box">
+        <div class="d5e-box-hd">D\u00e9s de vie &amp; Jets contre la mort</div>
+        <div class="d5e-box-bd"><div class="d5e-ddr">
+          <div class="d5e-ddr-b"><div class="d5e-ddr-lbl">D\u00e9s (${hdDie})</div>${mkHD(hdTotal,hdUsed)}</div>
+          <div class="d5e-ddr-b"><div class="d5e-ddr-lbl">Succ\u00e8s</div>${mkJCM(jcmS,'s')}</div>
+          <div class="d5e-ddr-b"><div class="d5e-ddr-lbl">\u00c9checs</div>${mkJCM(jcmF,'f')}</div>
+        </div></div>
+      </div>`;
+
+      // PV
+      const pvRow = `<div class="d5e-box">
+        <div class="d5e-box-hd">Points de vie</div>
+        <div class="d5e-box-bd"><div class="d5e-pv-row">
+          <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_max||'\u2014'}</div><div class="d5e-pv-l">Max</div></div>
+          <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_actuels!=null?pj.pv_actuels:'\u2014'}</div><div class="d5e-pv-l">Actuels</div></div>
+          <div class="d5e-pv-cell"><div class="d5e-pv-v">${pj.pv_temp||'\u2014'}</div><div class="d5e-pv-l">Temp.</div></div>
+        </div></div>
+      </div>`;
+
+      // DÃ©s de vie + JCM
+
+      const COINS = [['PP','pp'],['PO','po'],['PE','pe'],['PA','pa'],['PC','pc']];
+      const argObj = pj.argent||{};
+      const argHtml = `<div class="argent-row">${COINS.map(([l,k])=>`<div class="coin-box"><span class="coin-lbl">${l}</span><span class="coin-val">${argObj[k]!=null&&argObj[k]!==''?argObj[k]:'_'}</span></div>`).join('')}</div>`;
+      const equipItems = pj.equipement||[];
+      const equipSection = `<div class="d5e-box">
+        <div class="d5e-box-hd">\u00c9quipement</div>
+        <div class="d5e-box-bd">
+          ${argHtml}
+          ${equipItems.length?`<div class="d5e-txt" style="margin-top:6px">${equipItems.join('\n')}</div>`:''}
+        </div>
+      </div>`;
+
+      // PersonnalitÃ©
+
+      const colM = `<div class="d5e-col-m">
+        <div class="d5e-box">
+          <div class="d5e-box-hd">Jets de sauvegarde</div>
+          <div class="d5e-box-bd"><div class="sklist">${saveRows}</div></div>
+        </div>
+        <div class="d5e-box">
+          <div class="d5e-box-hd">Comp\u00e9tences</div>
+          <div class="d5e-box-bd">
+            <div class="sklist">${skillItems}</div>
+            <div class="expnote" style="margin-top:4px">\u25cb vide = pas de ma\u00eetrise\u00a0\u00b7\u00a0\u25cf plein = ma\u00eetrise\u00a0\u00b7\u00a0\u25ce double = expertise</div>
+          </div>
+        </div>
+        ${diceRow}
+        ${equipSection}
+      </div>`;
+
+      // â”€â”€ Colonne droite â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // Attaques
+      let atkSection = '';
+      if((pj.attaques||[]).length){
+        const rows = (pj.attaques||[]).map(a => {
+          const j = (a.jet||'').replace('d20','');
+          const d = a.degats||a.valeur||'';
+          const desc = (a.description||'').toLowerCase();
+          const tp = desc.includes('perforant')?'perf.':desc.includes('tranchant')?'tranch.':desc.includes('contond')?'cont.':'';
+          return `<tr><td>${a.nom||''}</td><td>${j}</td><td>${d+(tp?' '+tp:'')}</td></tr>`;
+        }).join('');
+        atkSection = `<div class="d5e-box">
+          <div class="d5e-box-hd">Attaques</div>
+          <div class="d5e-box-bd"><table class="d5e-atk">
+            <thead><tr><th>Nom</th><th>Attaque</th><th>D\u00e9g\u00e2ts</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table></div>
+        </div>`;
+      }
+
+      // CapacitÃ©s
+      let capSection = '';
+      if((pj.capacites||[]).length){
+        const items = (pj.capacites||[]).map(c => {
+          const n = typeof c==='string' ? c : (c.nom||'');
+          const u = typeof c!=='string' && c.utilisations
+            ? ` <span class="sec-note">${c.utilisations}\u00d7/${c.recharge||''}</span>` : '';
+          return `<div class="card"><div class="card-h"><div class="card-n">${n}</div>${u?'<div class="card-right">'+u+'</div>':''}</div></div>`;
+        }).join('');
+        capSection = `<div class="d5e-box">
+          <div class="d5e-box-hd">Capacit\u00e9s &amp; Traits</div>
+          <div class="d5e-box-bd">${items}</div>
+        </div>`;
+      }
+
+      // Sorts
+      let sortSection = '';
+      const sdnd = pj.sorts_dnd||{};
+      const hasS = (pj.sorts_mineurs||[]).length || Object.values(sdnd).some(a=>a.length);
+      if(hasS){
+        const sortAttr = dc.attribut_sorts||'CHA';
+        const sortMod  = am(sortAttr);
+        const dd = 8+bm+sortMod, ba = sign(bm+sortMod);
+        let html = `<div class="d5e-sbar">DC\u00a0${dd}\u00a0\u00b7\u00a0Attaque\u00a0${ba}</div>`;
+        if((pj.sorts_mineurs||[]).length)
+          html += `<div class="d5e-srow"><span class="d5e-sn">Mineurs</span><span>${(pj.sorts_mineurs||[]).map(s=>typeof s==='string'?s:s.nom||'').join(', ')}</span></div>`;
+        for(let nv=1;nv<=9;nv++){
+          const ar = sdnd['niveau_'+nv]||[];
+          if(ar.length)
+            html += `<div class="d5e-srow"><span class="d5e-sn">Niv.\u00a0${nv}</span><span>${ar.map(s=>typeof s==='string'?s:s.nom||'').join(', ')}</span></div>`;
+        }
+        sortSection = `<div class="d5e-box">
+          <div class="d5e-box-hd">Sorts <span style="font-style:italic;text-transform:none;letter-spacing:0;opacity:.65;">${pj.classe||''}</span></div>
+          <div class="d5e-box-bd">${html}</div>
+        </div>`;
+      }
+
+      // MaÃ®trises & langues
+      let maitSection = '';
+      const mLines = [];
+      if(dc.maitrise_armures) mLines.push(`<strong>Armures\u00a0:</strong> ${dc.maitrise_armures}`);
+      if(dc.maitrise_armes)   mLines.push(`<strong>Armes\u00a0:</strong> ${dc.maitrise_armes}`);
+      if(dc.maitrise_outils)  mLines.push(`<strong>Outils\u00a0:</strong> ${dc.maitrise_outils}`);
+      if(dc.langues)          mLines.push(`<strong>Langues\u00a0:</strong> ${dc.langues}`);
+      if(mLines.length) maitSection = `<div class="d5e-box">
+        <div class="d5e-box-hd">Ma\u00eetrises &amp; Langues</div>
+        <div class="d5e-box-bd"><div class="d5e-ml">${mLines.join('<br>')}</div></div>
+      </div>`;
+
+      // Ã‰quipement
+      let traitSection = '';
+      const tFields = [['traits_perso','Traits'],['ideaux','Id\u00e9aux'],['liens','Liens'],['defauts','D\u00e9fauts']];
+      const tBoxes = tFields.filter(([k])=>dc[k]).map(([k,lbl]) =>
+        `<div class="d5e-tbox"><div class="d5e-tlbl">${lbl}</div><div class="d5e-tval">${dc[k]}</div></div>`
+      ).join('');
+      if(tBoxes) traitSection = `<div class="d5e-box">
+        <div class="d5e-box-hd">Personnalit\u00e9</div>
+        <div class="d5e-box-bd"><div class="d5e-tgrid">${tBoxes}</div></div>
+      </div>`;
+
+      // Histoire
+      let histSection = '';
+      if(dc.histoire) histSection = `<div class="d5e-box">
+        <div class="d5e-box-hd">Histoire</div>
+        <div class="d5e-box-bd"><div class="d5e-txt">${dc.histoire}</div></div>
+      </div>`;
+
+      let notesMJSection='';
+      if((pj.notes_mj||[]).length){
+        const nmjB=(pj.notes_mj||[]).map(n=>`<div class="d5e-tbox"><div class="d5e-tlbl">${n.titre||''}</div><div class="d5e-tval">${n.contenu||''}</div></div>`).join('');
+        notesMJSection=`<div class="d5e-box mj-only"><div class="d5e-box-hd">Notes MJ</div><div class="d5e-box-bd"><div class="d5e-tgrid">${nmjB}</div></div></div>`;
+      }
+      const colR = `<div class="d5e-col-r">
+        ${atkSection}${capSection}${sortSection}${maitSection}${traitSection}${histSection}${notesMJSection}
+      </div>`;
+
+      return `<div style="padding:14px 18px;">
+        ${header}
+        <div class="d5e-cols">${colL}${colM}${colR}</div>
+      </div>`;
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
