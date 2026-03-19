@@ -25,7 +25,7 @@
     "secrets_mj": "A perçu pendant le combat une résonance mentale émanant de Marte-Crânes — voix qui ne passe pas par les lèvres, adresse directement l'esprit. Recoupé avec le témoignage de Renn sur l'homme à la capuche. Ne l'a pas dit dans son rapport.",
     "notes": "A rédigé le rapport officiel de la session 1. Supérieur hiérarchique immédiat des aventuriers dans la Brigade.",
     "visible_joueurs": true,
-    "portrait_url": "/img/portraits/edward.png",
+    "portrait_url": "img/portraits/edward.png",
     "tic": "",
     "phrase_cle": "",
     "repliques": []
