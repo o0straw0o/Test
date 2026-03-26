@@ -89,7 +89,15 @@ async function fetchAndApplySettings() {
 
 // ── MODE MJ ──────────────────────────────────────────────────────────────────
 function getMJMode() {
-  return localStorage.getItem('sw_mj_mode') === 'true';
+  if (localStorage.getItem('sw_mj_mode') !== 'true') return false;
+  // En mode web (non-Electron), exiger que des données d'auth soient présentes.
+  // Empêche le mode MJ de persister automatiquement sur la vue joueurs publiée
+  // quand le MJ n'a pas explicitement re-validé son identité.
+  if (typeof window.electronAPI === 'undefined' && !localStorage.getItem('sw_auth_v1')) {
+    localStorage.removeItem('sw_mj_mode');
+    return false;
+  }
+  return true;
 }
 
 function setMJMode(val) {
