@@ -1,0 +1,69 @@
+{
+  "noeuds": [
+    {
+      "id": "acte_01",
+      "type": "acte",
+      "titre": "Synopsis global",
+      "parent_id": null,
+      "ordre": 0,
+      "statut": "prevu",
+      "resume": "",
+      "contenu": "Les PJ, enrôlés de force par la Brigade du Saumon Noir, traquent Kaelen Veinargent, \"l'homme à la capuche\" responsable du vol de la Larme d'Argent de Valmorne. Présenté initialement comme un terroriste impitoyable, Kaelen se révèle être un être surpuissant fusionné à la poudre d'argent, et l'un des derniers Gardiens de Route (les \"Argentiers\"). Il tente désespérément de réparer le génocide des dragons (perpétré jadis par la Brigade) en créant une \"Super-Borne\" pour sauver la région du Souffle du Dessous. Mais ses méthodes chirurgicales et son orgueil scientifique vont se heurter à une réalité plus profonde : la Brume n'est pas un phénomène minéral à \"boucher\", c'est une force organique en colère que seule la magie druidique peut apaiser.",
+      "notes_mj": ""
+    },
+    {
+      "id": "acte_02",
+      "type": "acte",
+      "titre": "Intro - Les nouveaux brigadiers",
+      "parent_id": null,
+      "ordre": 1,
+      "statut": "prevu",
+      "resume": "",
+      "contenu": "Voir note de Lancenoir numéro 1 ",
+      "notes_mj": ""
+    },
+    {
+      "id": "acte_03",
+      "type": "acte",
+      "titre": "ARC 1 : L'ILLUSION DU MAL",
+      "parent_id": null,
+      "ordre": 2,
+      "statut": "prevu",
+      "resume": "",
+      "contenu": "",
+      "notes_mj": ""
+    },
+    {
+      "id": "sc_01",
+      "type": "scene",
+      "titre": "Étape 1 : Le Gardien du Moulin",
+      "parent_id": "acte_03",
+      "ordre": 0,
+      "statut": "prevu",
+      "resume": "",
+      "contenu": "La Transition (Pourquoi y vont-ils ?) : La note trouvée sur Bren est la seule piste concrète pour débusquer le commanditaire.\n\nL'Action : En arrivant au moulin, les PJ trouvent des soldats de la Brigade plongés dans un profond coma magique. Contrairement à ce qu'on pourrait croire, Kaelen ne les a pas laissés pour morts. Il a posé la propre lanterne abîmée des soldats dans un angle stratégique, créant une zone de protection étriquée mais suffisante contre la Brume. Autour d'eux, un Rôdeur de Brume (son familier) monte la garde pour repousser les monstres sauvages.\n\nLa Confrontation : Les PJ engagent le combat contre le familier. Kaelen apparaît alors. Insensible à la brume grâce à la poudre d'argent, il dégage une aura écrasante, met le groupe K.O. facilement. Il lance télépathiquement à Osric : \"Dites à vos maîtres que l'ennemi vient d'en dessous.\"\n\nLe liant vers la suite : Avant de disparaître, Kaelen (volontairement ou non) laisse derrière lui un reçu commercial de la Guilde des Tailleurs de Pierre, pointant vers un achat massif de \"pierre sourde\" dans la ville de Hautecendre.",
+      "notes_mj": "",
+      "liens": {
+        "pnjs": [],
+        "lieux": [],
+        "quetes": []
+      }
+    },
+    {
+      "id": "sc_02",
+      "type": "scene",
+      "titre": "Étape 2 : Hautecendre et le Tyran (La Fausse Piste)",
+      "parent_id": "acte_03",
+      "ordre": 1,
+      "statut": "prevu",
+      "resume": "",
+      "contenu": "La Transition : Les PJ se rendent à Hautecendre pour remonter la piste de cet achat massif. Que compte faire un terroriste avec des tonnes de pierre à obélisque ?\n\nL'Action : L'enquête les mène au Bourgmestre de la ville, un homme corrompu qui stocke la pierre sourde. Les PJ pensent qu'il est le complice de Kaelen et s'infiltrent pour le faire tomber.\n\nLa Révélation : Kaelen n'est pas son complice, il le rackette. Le bourgmestre affamait son peuple ; Kaelen l'a ruiné pour financer ses expériences, mais a secrètement redistribué une partie des fonds aux habitants. L'image du monstre s'effrite.\n\nLe liant vers la suite : Les registres du Bourgmestre indiquent que les convois de pierre sourde partent tous vers le sud-ouest de la Marche, en direction d'un village forestier nommé Crevesouche.",
+      "notes_mj": "",
+      "liens": {
+        "pnjs": [],
+        "lieux": [],
+        "quetes": []
+      }
+    }
+  ]
+}

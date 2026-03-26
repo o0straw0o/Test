@@ -4,270 +4,481 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monstres — La Larme d'Argent</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/sw-v2.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;0,900;1,400&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#111;font-family:'Crimson Text',serif;color:#f0f0f0;padding:0;}
-#main-nav{position:sticky;top:0;z-index:100;background:#111;border-bottom:2px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.5);}
-.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;display:flex;align-items:center;min-height:50px;gap:4px;}
-.nav-brand{flex-shrink:0;margin-right:10px;padding-right:12px;border-right:1px solid #444;}
-.nav-title{display:block;font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#fff;line-height:1.3;}
-.nav-sub{display:block;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.18em;color:rgba(255,255,255,.42);text-transform:uppercase;font-style:italic;}
-.nav-links{display:flex;flex:1;gap:0;overflow-x:auto;scrollbar-width:none;}
-.nav-links::-webkit-scrollbar{display:none;}
-.nav-link{display:flex;flex-direction:column;align-items:center;padding:9px 8px;text-decoration:none;color:rgba(255,255,255,.42);font-family:'Cinzel',serif;transition:color .2s,border-color .2s;border-bottom:2px solid transparent;flex-shrink:0;}
-.nav-link:hover{color:rgba(255,255,255,.82);border-bottom-color:rgba(255,255,255,.3);}
-.nav-link.active{color:#fff;border-bottom-color:#fff;}
-.nav-icon{font-size:.85rem;line-height:1;margin-bottom:2px;}
-.nav-label{font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
-.mj-toggle{flex-shrink:0;margin-left:8px;padding:5px 10px;background:transparent;border:1px solid #555;border-radius:20px;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);cursor:pointer;transition:all .2s;white-space:nowrap;}
-.mj-toggle:hover,.mj-toggle.mj-on{background:rgba(255,255,255,.1);border-color:#fff;color:#fff;}
-.nav-burger{display:none;margin-left:8px;background:transparent;border:1px solid #555;color:rgba(255,255,255,.35);padding:4px 8px;cursor:pointer;font-size:1rem;border-radius:6px;}
-@media(max-width:860px){.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:50px;left:0;right:0;background:#111;border-bottom:2px solid rgba(255,255,255,.18);z-index:99;max-height:calc(100vh - 50px);overflow-y:auto;}.nav-link{flex-direction:row;justify-content:flex-start;gap:12px;padding:13px 20px;border-bottom:1px solid #333;}.nav-label{font-size:.62rem;}.nav-burger{display:block;}}
-.mj-only{display:none;}
+/* ── PAGE HEADER ── */
+.m-page-header { margin-bottom: 24px; }
+.m-page-title {
+  font-family: var(--font-ui); font-size: 1.45rem; font-weight: 700;
+  color: var(--text); letter-spacing: .02em; margin-bottom: 3px;
+}
+.m-page-sub {
+  font-family: var(--font-body); font-size: .82rem;
+  font-style: italic; color: var(--text-muted);
+}
 
-.page-wrap{max-width:1100px;margin:0 auto;padding:20px 14px 56px;}
+/* ── FILTRES ── */
+.m-filters {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin-bottom: 22px;
+}
+.m-filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-pill {
+  font-family: var(--font-ui); font-size: .68rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 13px; border-radius: 20px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--surface); color: var(--text-muted);
+  cursor: pointer; transition: all .14s; outline: none;
+}
+.filter-pill:hover { border-color: var(--border-mid); color: var(--text); background: var(--surface-mid); }
+.filter-pill.active { background: var(--crimson); border-color: var(--crimson); color: var(--text); }
+.search-input{padding:5px 14px;background:var(--surface);border:1px solid var(--border-soft);border-radius:20px;font-family:var(--font-body);font-size:.85rem;font-style:italic;color:var(--text);outline:none;transition:border-color .15s;margin-left:auto;}
+.search-input::placeholder{color:var(--text-dim);}
+.search-input:focus{border-color:var(--border-mid);}
 
-/* MJ-guard */
-#mj-guard{display:none;text-align:center;padding:80px 20px;}
-.guard-icon{font-size:2rem;margin-bottom:14px;}
-.guard-ttl{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;}
-.guard-sub{font-size:.88rem;font-style:italic;color:rgba(255,255,255,.5);}
+/* ── GRILLE ── */
+.m-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px; align-items: start;
+}
+.m-empty {
+  grid-column: 1/-1; text-align: center; padding: 60px 20px;
+  font-family: var(--font-ui); font-size: .75rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text-dim);
+}
 
-/* FILTERS */
-.filters-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;}
-.filter-btn{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;background:#2a2a2a;color:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.2);border-radius:10px 10px 0 0;cursor:pointer;transition:all .15s;outline:none;position:relative;top:1px;}
-.filter-btn:hover{background:#333;color:#f0f0f0;}
-.filter-btn.active{background:#1a1a1a;color:#f0f0f0;border-color:rgba(255,255,255,.5);border-bottom-color:#1a1a1a;font-weight:700;z-index:2;}
-.search-input{padding:5px 12px;background:#252525;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;font-family:'Crimson Text',serif;font-size:.85rem;font-style:italic;color:#f0f0f0;outline:none;transition:border-color .15s;margin-left:auto;}
-.search-input::placeholder{color:rgba(255,255,255,.42);}
+/* ── CARTE ── */
+.monstre-card {
+  background: var(--surface); border-radius: 12px;
+  box-shadow: var(--sh-card); overflow: hidden;
+  animation: cardIn .3s ease both;
+  display: flex; flex-direction: column;
+  transition: box-shadow .18s;
+  height: 220px;
+}
+.monstre-card:hover { box-shadow: var(--sh-card-hov); }
+.monstre-card.expanded { height: auto; overflow: visible; }
 
-.grid-wrap{background:#1a1a1a;border:2px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;padding:16px;}
-.monstre-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:start;}
+/* ── EN-TÊTE CARTE ── */
+.m-card-head {
+  padding: 14px 16px 10px;
+  display: flex; gap: 12px; align-items: flex-start;
+  min-height: 105px; flex-shrink: 0;
+}
+.m-portrait-wrap {
+  width: 62px; height: 78px; flex-shrink: 0;
+  border-radius: 7px; border: 1px solid var(--border-soft);
+  background: var(--surface-mid);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.m-portrait-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.m-type-icon {
+  font-size: 1.4rem; line-height: 1;
+  color: var(--border-mid);
+}
+.m-info { flex: 1; min-width: 0; }
+.m-nom {
+  font-family: var(--font-ui); font-size: .92rem; font-weight: 700;
+  color: var(--text); margin-bottom: 2px; line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.m-sous-titre {
+  font-size: .76rem; font-style: italic; color: var(--text-muted);
+  margin-bottom: 7px; line-height: 1.3;
+}
+.m-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.m-chip {
+  font-family: var(--font-ui); font-size: .58rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 20px; border: 1.5px solid;
+}
+/* FP color-coding par danger */
+.m-chip-fp-trivial { color: var(--text-dim);   border-color: var(--border-soft); }
+.m-chip-fp-low     { color: #7ab878;            border-color: #4a7840; }
+.m-chip-fp-medium  { color: #d4b060;            border-color: #8a7030; }
+.m-chip-fp-hard    { color: #d48060;            border-color: #8a5030; }
+.m-chip-fp-deadly  { color: var(--crimson);     border-color: var(--crimson-bd); }
+/* MJ-only badge */
+.m-chip-mj {
+  color: var(--crimson); border-color: var(--crimson-bd);
+  background: var(--crimson-dim);
+}
 
-/* CARTE MONSTRE */
-.monstre-card{background:#1a1a1a;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:background .15s;}
-.monstre-card:not(.open):hover{background:#202020;}
-.monstre-card.open{cursor:default;border-width:2px;}
-.monstre-card-head{padding:12px 14px 10px;display:flex;align-items:flex-start;gap:10px;}
-.m-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;margin-top:1px;color:rgba(255,255,255,.55);}
-.monstre-head-info{flex:1;min-width:0;}
-.monstre-nom{font-family:'Cinzel',serif;font-size:.78rem;font-weight:700;letter-spacing:.04em;line-height:1.2;margin-bottom:2px;}
-.monstre-type{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.55);line-height:1.4;}
-.m-fp-badge{font-family:'Cinzel',serif;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.2);border-radius:20px;padding:1px 7px;flex-shrink:0;align-self:flex-start;white-space:nowrap;color:rgba(255,255,255,.55);}
-.monstre-chevron{font-size:.65rem;color:rgba(255,255,255,.42);transition:transform .2s;margin-top:4px;flex-shrink:0;}
-.monstre-card.open .monstre-chevron{transform:rotate(180deg);}
-.monstre-card-div{height:1px;background:rgba(255,255,255,.2);margin:0 14px;display:none;}
-.monstre-card.open .monstre-card-div{display:block;}
-.monstre-card-body{padding:0 14px 12px;display:none;}
-.monstre-card.open .monstre-card-body{display:block;}
+/* ── DESCRIPTION ── */
+.m-card-divider { height: 1px; background: var(--border-soft); margin: 0; }
+.m-desc-area {
+  padding: 10px 16px; flex: 1; min-height: 0;
+  overflow-y: auto; scrollbar-width: thin;
+  scrollbar-color: var(--border-mid) transparent;
+}
+.m-desc-area::-webkit-scrollbar { width: 3px; }
+.m-desc-area::-webkit-scrollbar-track { background: transparent; }
+.m-desc-area::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+.m-desc {
+  font-size: .8rem; font-style: italic; color: var(--text-muted);
+  line-height: 1.55; margin: 0;
+}
 
-.m-mj-section{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);display:none;}
-body.mj-active .m-mj-section{display:block;}
-.m-stats-table{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
-.m-stat-cell{background:rgba(255,255,255,.05);border-radius:8px;padding:7px 4px;text-align:center;}
-.m-stat-val{font-size:.95rem;font-weight:700;color:#f0f0f0;line-height:1.2;}
-.m-stat-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:2px;}
-.m-fp-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.m-fp-dots{font-size:1.1rem;letter-spacing:2px;color:rgba(255,200,80,.9);}
-.m-fp-label{font-size:.68rem;color:rgba(255,255,255,.45);font-family:'Cinzel',serif;letter-spacing:.08em;}
-.m-section-title{font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.38);margin:10px 0 5px;font-family:'Cinzel',serif;}
-.m-action{font-size:.78rem;margin-bottom:5px;line-height:1.45;color:rgba(255,255,255,.75);}
-.m-action strong{color:#f0f0f0;}
-.m-desc{font-size:.82rem;line-height:1.65;color:rgba(255,255,255,.78);font-style:italic;margin:8px 0;}
-.m-detail-row{display:flex;gap:0;margin-bottom:4px;font-size:.78rem;line-height:1.5;}
-.m-detail-lbl{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#f0f0f0;min-width:110px;flex-shrink:0;}
-.m-detail-val{color:rgba(255,255,255,.65);font-style:italic;}
-.mj-block{margin-top:8px;border:1.5px solid #c00;border-radius:10px;padding:9px 12px;}
-.mj-block-title{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:#c00;margin-bottom:6px;}
-.mj-block-txt{font-size:.78rem;font-style:italic;color:rgba(255,255,255,.78);line-height:1.6;}
-.empty-msg{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);text-align:center;padding:40px;grid-column:1/-1;}
-.m-portrait{width:80px;height:100px;object-fit:cover;border-radius:6px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;margin-right:10px;display:block;}
-.portrait-placeholder{width:80px;height:100px;border:1.5px solid rgba(255,255,255,.15);border-radius:6px;background:#202020;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px;}
-.portrait-placeholder .p-icon{font-size:1.4rem;color:rgba(255,255,255,.22);margin-bottom:4px;}
-.portrait-placeholder .p-lbl{font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.25);text-align:center;line-height:1.3;}
-.mj-badge{display:inline-block;font-family:'Cinzel',serif;font-size:.38rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(200,0,0,.2);border:1px solid #c00;border-radius:4px;padding:1px 5px;color:#c00;margin-left:6px;vertical-align:middle;}
+/* ── FOOTER ── */
+.m-footer {
+  padding: 6px 16px 10px; display: flex;
+  justify-content: flex-end; margin-top: auto;
+}
+.btn-details {
+  font-family: var(--font-ui); font-size: .64rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; padding: 5px 14px;
+  background: var(--crimson-dim); border: 1px solid var(--crimson-bd);
+  border-radius: 7px; color: var(--text-muted);
+  cursor: pointer; transition: all .14s;
+}
+.btn-details:hover, .monstre-card.expanded .btn-details {
+  background: var(--crimson); border-color: var(--crimson); color: var(--text);
+}
 
-@media(max-width:640px){.monstre-grid{grid-template-columns:1fr;}.search-input{margin-left:0;width:100%;}}
+/* ── SECTION DÉPLIÉE ── */
+.m-details-area {
+  display: none; border-top: 1px solid var(--border-soft);
+  padding: 12px 16px 14px; animation: cardIn .2s ease;
+}
+.monstre-card.expanded .m-details-area { display: block; }
+
+/* Stats grid (partagé) */
+.m-stats-grid {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 10px; background: var(--surface-mid);
+  border: 1px solid var(--crimson-bd); border-radius: 10px;
+  margin-bottom: 10px;
+}
+.m-stats-row1 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.m-stat-box {
+  background: var(--bg); border: 1px solid var(--border-soft);
+  border-radius: 6px; padding: 6px 4px; text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px;
+}
+.m-stat-lbl {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: .08em; display: block;
+}
+.m-stat-val {
+  font-family: var(--font-body); font-size: 17px; font-weight: 900;
+  color: var(--text); line-height: 1; display: block;
+}
+
+/* Lignes détail */
+.m-detail-line {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; background: var(--bg); border: 1px solid var(--border-soft);
+  border-radius: 6px; padding: 5px 10px; margin-bottom: 5px;
+}
+.m-detail-lbl {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: .08em; flex-shrink: 0;
+}
+.m-detail-val {
+  font-size: .78rem; font-style: italic;
+  color: var(--text-muted); text-align: right; flex: 1;
+}
+
+/* Section titre */
+.m-section-title {
+  font-family: var(--font-ui); font-size: .6rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-dim); margin: 10px 0 5px;
+}
+
+/* Actions */
+.m-actions-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+.m-action-item {
+  background: var(--bg); border: 1px solid var(--border-soft);
+  border-radius: 6px; overflow: hidden;
+}
+.m-action-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; cursor: pointer; user-select: none;
+  transition: background .12s;
+}
+.m-action-head:hover { background: var(--surface-mid); }
+.m-action-name {
+  font-family: var(--font-ui); font-size: .78rem; font-weight: 700;
+  color: var(--crimson); flex: 1;
+}
+.m-action-chevron {
+  font-size: .55rem; color: var(--text-dim);
+  transition: transform .18s; flex-shrink: 0;
+}
+.m-action-item.open .m-action-chevron { transform: rotate(180deg); }
+.m-action-body {
+  display: none; padding: 0 10px 9px;
+  font-size: .78rem; font-style: italic;
+  color: var(--text-muted); line-height: 1.6;
+  border-top: 1px solid var(--border-soft);
+}
+.m-action-item.open .m-action-body { display: block; }
+
+/* Notes MJ */
+.m-mj-block {
+  margin-top: 10px; border: 1.5px solid var(--crimson-bd);
+  border-radius: 9px; padding: 10px 12px;
+}
+.m-mj-title {
+  font-family: var(--font-ui); font-size: .55rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--crimson); margin-bottom: 6px;
+}
+.m-mj-txt {
+  font-size: .8rem; font-style: italic;
+  color: var(--text-muted); line-height: 1.6;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .m-grid { grid-template-columns: 1fr; }
+  .m-search-wrap { margin-left: 0; }
+  .m-search-wrap input { width: 100%; }
+  .m-filters { flex-direction: column; align-items: flex-start; }
+}
+.m-stats-grid { display: none; }
+body.mj-active .m-stats-grid { display: flex; }
 </style>
 </head>
 <body>
 
-<div id="mj-guard">
-  <div class="guard-icon">◎</div>
-  <div class="guard-ttl">Mode MJ requis</div>
-  <div class="guard-sub">Activer le mode MJ via le bouton ⚿ dans la navigation.</div>
+<div class="m-page-header">
+  <h1 class="page-title">Les <span>Monstres</span></h1>
+  <p class="page-sub">Bestiaire de la campagne</p>
 </div>
 
-<div class="page-wrap" id="app-wrap" style="display:none;">
-  <div class="filters-bar" id="filters-bar">
-    <button class="filter-btn active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
-    <input class="search-input" type="text" id="search-input" placeholder="Rechercher…" oninput="applyFilters()">
+<div class="m-filters" id="m-filters">
+  <div class="m-filter-group" id="m-filter-group">
+    <button class="filter-pill active" data-filter="tous" onclick="setFilter('tous',this)">Tous</button>
   </div>
-  <div class="grid-wrap">
-    <div class="monstre-grid" id="monstre-grid">
-      <p style="font-style:italic;color:rgba(255,255,255,.5);font-size:.82rem;grid-column:1/-1;text-align:center;padding:24px;">Chargement…</p>
-    </div>
-  </div>
+  <input class="search-input" type="text" id="m-search" placeholder="Rechercher…" oninput="applyFilters()">
+</div>
+
+<div class="m-grid" id="m-grid">
+  <p class="m-empty">Chargement…</p>
 </div>
 
 <script src="js/storage.js"></script>
-<script src="js/nav.js"></script>
+<script src="js/nav-v2.js"></script>
 <script>
 let MONSTRE_DATA = [];
-let currentFilter = 'tous';
-
-function isMjMode() {
-  try { return localStorage.getItem('sw_mj_mode') === 'true'; } catch(e) { return false; }
-}
+let _filter = 'tous';
 
 const TYPE_ICONS = {
-  'humanoïde': '◈', 'mort-vivant': '✝', 'bête': '◉', 'créature magique': '✧',
-  'dragon': '✦', 'fée': '◷', 'fiélon': '⊗', 'construit': '⊟',
-  'aberration': '⊕', 'géant': '⊞', 'élémentaire': '⊛', 'autre': '◎'
+  'humanoïde':'◈','mort-vivant':'✝','bête':'◉','créature magique':'✧',
+  'dragon':'✦','fée':'◷','fiélon':'⊗','construit':'⊟',
+  'aberration':'⊕','géant':'⊞','élémentaire':'⊛','autre':'◎'
 };
 
-async function init() {
-  document.getElementById('app-wrap').style.display = 'block';
-  // Observer toujours actif (CSS show/hide .m-mj-section via body.mj-active)
-  new MutationObserver(() => { if (MONSTRE_DATA.length) { buildFilters(); applyFilters(); } })
-    .observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  try {
-    MONSTRE_DATA = await loadData('monstres.json');
-    buildFilters();
-    applyFilters();
-  } catch(e) {
-    document.getElementById('monstre-grid').innerHTML =
-      '<p style="color:#c00;font-size:.82rem;font-style:italic;grid-column:1/-1;text-align:center;padding:24px;">⚠ Erreur chargement : ' + e.message + '</p>';
+function fpClass(fp) {
+  const s = String(fp);
+  if (s === '0' || s === '1/8') return 'm-chip-fp-trivial';
+  if (s === '1/4' || s === '1/2') return 'm-chip-fp-low';
+  if (s === '1' || s === '2') return 'm-chip-fp-medium';
+  const n = parseFloat(s);
+  if (!isNaN(n) && n <= 7) return 'm-chip-fp-hard';
+  return 'm-chip-fp-deadly';
+}
+
+function vitCase(v) {
+  if (!v) return null;
+  const n = parseFloat(String(v));
+  return isNaN(n) ? null : Math.round(n / 1.5) + ' c.';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildCard(m, idx) {
+  const isMJ = (typeof getMJMode === 'function') ? getMJMode() : localStorage.getItem('sw_mj_mode') === 'true';
+  const fpStr = m.fp != null ? String(m.fp) : '?';
+  const icon  = TYPE_ICONS[(m.type||'').toLowerCase()] || '◎';
+
+  const portrait = m.portrait_url
+    ? `<img src="${escHtml(m.portrait_url)}" alt="${escHtml(m.nom)}" loading="lazy" onerror="this.style.display='none'">`
+    : `<span class="m-type-icon">${icon}</span>`;
+
+  const sousTitre = [m.type, m.taille].filter(Boolean).join(' · ');
+
+  const mjChip = (isMJ && m.visible_joueurs === false)
+    ? `<span class="m-chip m-chip-mj">MJ</span>` : '';
+
+  // Section dépliée
+  const details = buildDetails(m, isMJ);
+
+  const descHtml = m.description
+    ? `<div class="m-card-divider"></div>
+       <div class="m-desc-area"><p class="m-desc">${escHtml(m.description)}</p></div>`
+    : '';
+
+  return `<div class="monstre-card" data-id="${escHtml(m.id||m.nom)}" style="animation-delay:${idx*.04}s">
+  <div class="m-card-head">
+    <div class="m-portrait-wrap">${portrait}</div>
+    <div class="m-info">
+      <div class="m-nom" title="${escHtml(m.nom)}">${escHtml(m.nom)}</div>
+      <div class="m-sous-titre">${escHtml(sousTitre)}</div>
+      <div class="m-chips">
+        <span class="m-chip ${fpClass(m.fp)}">FP ${escHtml(fpStr)}</span>
+        ${mjChip}
+      </div>
+    </div>
+  </div>
+  ${descHtml}
+  <div class="m-footer">
+    <button class="btn-details" onclick="toggleCard(this.closest('.monstre-card'))">Détails &#8595;</button>
+  </div>
+  <div class="m-details-area">${details}</div>
+</div>`;
+}
+
+function buildDetails(m, isMJ) {
+  let html = '';
+
+  // ── Stats CA / PV / Vitesse ──────────────────────────────────────────────
+  const caVal  = m.ca   != null ? escHtml(String(m.ca))  : '&mdash;';
+  const pvVal  = m.pv   != null ? escHtml(String(m.pv))  : '&mdash;';
+  const vitVal = vitCase(m.vitesse) || '&mdash;';
+
+  html += `<div class="m-stats-grid"><div class="m-stats-row1">
+    <div class="m-stat-box"><span class="m-stat-lbl">CA</span><span class="m-stat-val">${caVal}</span></div>
+    <div class="m-stat-box"><span class="m-stat-lbl">PV</span><span class="m-stat-val">${pvVal}</span></div>
+    <div class="m-stat-box"><span class="m-stat-lbl">Vitesse</span><span class="m-stat-val">${vitVal}</span></div>
+  </div></div>`;
+
+  // ── Actions (accordéon) ──────────────────────────────────────────────────
+  if (m.actions && m.actions.length) {
+    html += `<div class="m-section-title">Actions</div><div class="m-actions-list">`;
+    html += m.actions.map(a => {
+      const hasDesc = a.description && a.description.trim();
+      return `<div class="m-action-item">
+        <div class="m-action-head" ${hasDesc ? 'onclick="this.closest(\'.m-action-item\').classList.toggle(\'open\')"' : ''}>
+          <span class="m-action-name">${escHtml(a.nom||a.name||'')}</span>
+          ${hasDesc ? '<span class="m-action-chevron">&#9660;</span>' : ''}
+        </div>
+        ${hasDesc ? `<div class="m-action-body">${escHtml(a.description)}</div>` : ''}
+      </div>`;
+    }).join('');
+    html += `</div>`;
+  }
+
+  // ── Lignes détail ────────────────────────────────────────────────────────
+  function detailLine(label, val) {
+    if (!val) return '';
+    const v = Array.isArray(val) ? val.join(', ') : String(val);
+    return `<div class="m-detail-line">
+      <span class="m-detail-lbl">${escHtml(label)}</span>
+      <span class="m-detail-val">${escHtml(v)}</span>
+    </div>`;
+  }
+
+  html += detailLine('Vulnérabilités', m.vulnerabilites);
+  const imm = [m.immunites_degats, m.immunites_etats].filter(Boolean).join(' / ');
+  html += detailLine('Immunités', imm || null);
+  html += detailLine('Résistances', m.resistances);
+  html += detailLine('Sens', m.sens);
+  html += detailLine('Langues', m.langues);
+
+  // ── Notes MJ ────────────────────────────────────────────────────────────
+  if (isMJ && m.notes_mj) {
+    html += `<div class="m-mj-block mj-only">
+      <div class="m-mj-title">&#128273; Notes MJ</div>
+      <div class="m-mj-txt">${escHtml(m.notes_mj)}</div>
+    </div>`;
+  }
+
+  return html || '<p style="font-size:.78rem;font-style:italic;color:var(--text-dim)">Aucun détail disponible.</p>';
+}
+
+function toggleCard(card) {
+  const wasOpen = card.classList.contains('expanded');
+  document.querySelectorAll('.monstre-card.expanded').forEach(c => {
+    c.classList.remove('expanded');
+    const btn = c.querySelector('.btn-details');
+    if (btn) btn.textContent = 'D\u00e9tails \u2193';
+  });
+  if (!wasOpen) {
+    // Regénérer les détails (MJ mode peut avoir changé)
+    const id = card.dataset.id;
+    const m = MONSTRE_DATA.find(x => String(x.id||x.nom) === id);
+    if (m) {
+      const isMJ = (typeof getMJMode === 'function') ? getMJMode() : localStorage.getItem('sw_mj_mode') === 'true';
+      card.querySelector('.m-details-area').innerHTML = buildDetails(m, isMJ);
+    }
+    card.classList.add('expanded');
+    const btn = card.querySelector('.btn-details');
+    if (btn) btn.textContent = 'Fermer \u2191';
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
+// ── FILTRES ─────────────────────────────────────────────────────────────────
 function buildFilters() {
-  const types = [...new Set(MONSTRE_DATA.map(m => m.categorie||m.type).filter(Boolean))].sort();
-  const bar = document.getElementById('filters-bar');
-  const search = document.getElementById('search-input');
-  bar.querySelectorAll('.filter-btn:not([data-filter="tous"])').forEach(b => b.remove());
+  const isMJ = (typeof getMJMode === 'function') ? getMJMode() : false;
+  const visible = isMJ ? MONSTRE_DATA : MONSTRE_DATA.filter(m => m.visible_joueurs !== false);
+  const types = [...new Set(visible.map(m => m.categorie || m.type).filter(Boolean))].sort();
+  const group = document.getElementById('m-filter-group');
+
+  group.querySelectorAll('[data-filter]:not([data-filter="tous"])').forEach(b => b.remove());
   types.forEach(t => {
     const btn = document.createElement('button');
-    btn.className = 'filter-btn';
+    btn.className = 'filter-pill' + (_filter === t ? ' active' : '');
     btn.dataset.filter = t;
     btn.onclick = () => setFilter(t, btn);
     btn.textContent = t.charAt(0).toUpperCase() + t.slice(1);
-    bar.insertBefore(btn, search);
+    group.appendChild(btn);
   });
 }
 
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+function setFilter(f, btn) {
+  _filter = f;
+  document.querySelectorAll('#m-filter-group .filter-pill').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   applyFilters();
 }
 
 function applyFilters() {
-  const q = (document.getElementById('search-input').value || '').toLowerCase().trim();
-  const mj = isMjMode();
-  // Masquer les monstres avec visible_joueurs:false pour les joueurs
-  let filtered = MONSTRE_DATA.filter(m => mj || m.visible_joueurs !== false);
-  if (currentFilter !== 'tous') filtered = filtered.filter(m => (m.categorie||m.type) === currentFilter);
-  if (q) filtered = filtered.filter(m =>
+  const q   = (document.getElementById('m-search').value || '').toLowerCase().trim();
+  const isMJ = (typeof getMJMode === 'function') ? getMJMode() : localStorage.getItem('sw_mj_mode') === 'true';
+  let list = isMJ ? MONSTRE_DATA : MONSTRE_DATA.filter(m => m.visible_joueurs !== false);
+  if (_filter !== 'tous') list = list.filter(m => (m.categorie || m.type) === _filter);
+  if (q) list = list.filter(m =>
     (m.nom||'').toLowerCase().includes(q) ||
     (m.type||'').toLowerCase().includes(q) ||
-    (m.description||'').toLowerCase().includes(q));
-  renderGrid(filtered);
+    (m.description||'').toLowerCase().includes(q)
+  );
+  renderGrid(list);
 }
 
-function renderGrid(monstres) {
-  const grid = document.getElementById('monstre-grid');
-  if (!monstres.length) {
-    grid.innerHTML = '<p class="empty-msg">Aucun monstre correspondant.</p>';
-    return;
+function renderGrid(list) {
+  const grid = document.getElementById('m-grid');
+  if (!list.length) { grid.innerHTML = '<p class="m-empty">Aucun monstre correspondant.</p>'; return; }
+  grid.innerHTML = list.map((m, i) => buildCard(m, i)).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    MONSTRE_DATA = await loadData('monstres.json');
+    if (!Array.isArray(MONSTRE_DATA)) MONSTRE_DATA = [];
+    buildFilters();
+    applyFilters();
+  } catch(e) {
+    document.getElementById('m-grid').innerHTML =
+      '<p class="m-empty" style="color:var(--crimson)">&#9888; Erreur de chargement.</p>';
   }
-  grid.innerHTML = monstres.map(buildCard).join('');
 }
 
-function fpDots(fp) {
-  const fpMap = {'0':0,'1/8':0,'1/4':1,'1/2':2,'1':3,'2':4,'3':4,'4':4,'5':4,'6':4,'7':4,'8':4,'9':4,'10':4};
-  const k = String(fp);
-  const nd = fpMap[k] != null ? fpMap[k] : (parseInt(fp) >= 2 ? 4 : 0);
-  return '\u25cf'.repeat(nd) + '\u25cb'.repeat(Math.max(0, 4 - nd));
-}
-function parseVitCase(v) {
-  if (!v) return null;
-  const num = parseFloat(String(v));
-  if (isNaN(num)) return null;
-  return Math.round(num / 1.5) + ' c.';
-}
-function buildCard(m) {
-  const icon = TYPE_ICONS[m.type] || '\u25ce';
-  const fpStr = m.fp != null ? String(m.fp) : '?';
-  const mjBadge = (isMjMode() && m.visible_joueurs === false)
-    ? '<span class="mj-badge">MJ</span>' : '';
-
-  // Portrait + description : visible par tous
-  const portraitBodyHTML = '<div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:8px;">'
-    + (m.portrait_url
-      ? `<img class="m-portrait" src="${m.portrait_url}" alt="${m.nom}" loading="lazy" onerror="this.style.display='none'">`
-      : '<div class="portrait-placeholder"><span class="p-icon">\u25ce</span><span class="p-lbl">Portrait<br>\u00e0 venir</span></div>')
-    + `<div style="flex:1;">${m.description ? '<p class="m-desc" style="margin:0;">' + m.description + '</p>' : ''}</div></div>`;
-
-  // Bloc MJ : stats + actions + immunites etc.
-  const mjSection = (() => {
-    const dots = fpDots(fpStr);
-    const vitCase = parseVitCase(m.vitesse);
-    const statsRow = '<div class="m-stats-table">'
-      + (m.ca ? '<div class="m-stat-cell"><div class="m-stat-val">' + m.ca + '</div><div class="m-stat-lbl">CA</div></div>' : '')
-      + (m.pv ? '<div class="m-stat-cell"><div class="m-stat-val">' + m.pv + '</div><div class="m-stat-lbl">PV</div></div>' : '')
-      + (vitCase ? '<div class="m-stat-cell"><div class="m-stat-val">' + vitCase + '</div><div class="m-stat-lbl">Vitesse</div></div>' : '')
-      + '</div>';
-    const fpRow = '<div class="m-fp-row"><span class="m-fp-dots">' + dots + '</span>'
-      + '<span class="m-fp-label">FP ' + fpStr + '</span></div>';
-    const actionsHTML = (m.actions && m.actions.length)
-      ? '<div class="m-section-title">Actions</div>'
-        + m.actions.map(a => '<div class="m-action"><strong>' + a.nom + '</strong> \u2014 ' + a.description + '</div>').join('')
-      : '';
-    const vulnHTML = (m.vulnerabilites && m.vulnerabilites.length)
-      ? '<div class="m-detail-row"><span class="m-detail-lbl">Vuln\u00e9rabilit\u00e9s</span><span class="m-detail-val">' + (Array.isArray(m.vulnerabilites) ? m.vulnerabilites.join(', ') : m.vulnerabilites) + '</span></div>' : '';
-    const immVal = [m.immunites_degats||'', m.immunites_etats||''].filter(Boolean).join(' / ');
-    const immHTML = immVal ? '<div class="m-detail-row"><span class="m-detail-lbl">Immunit\u00e9s</span><span class="m-detail-val">' + immVal + '</span></div>' : '';
-    const resHTML = (m.resistances && m.resistances.length)
-      ? '<div class="m-detail-row"><span class="m-detail-lbl">R\u00e9sistances</span><span class="m-detail-val">' + (Array.isArray(m.resistances) ? m.resistances.join(', ') : m.resistances) + '</span></div>' : '';
-    const sensHTML = m.sens
-      ? '<div class="m-detail-row"><span class="m-detail-lbl">Sens</span><span class="m-detail-val">' + m.sens + '</span></div>' : '';
-    const langHTML = (m.langues && m.langues.length)
-      ? '<div class="m-detail-row"><span class="m-detail-lbl">Langues</span><span class="m-detail-val">' + (Array.isArray(m.langues) ? m.langues.join(', ') : m.langues) + '</span></div>' : '';
-    const notesHTML = m.notes_mj
-      ? '<div class="mj-block"><div class="mj-block-title">\u26bf Notes MJ</div><div class="mj-block-txt">' + m.notes_mj + '</div></div>' : '';
-    return '<div class="m-mj-section">'
-      + fpRow + statsRow + actionsHTML + vulnHTML + immHTML + resHTML + sensHTML + langHTML + notesHTML
-      + '</div>';
-  })();
-
-  return `
-  <div class="monstre-card" id="card-${m.id}" onclick="toggleCard('${m.id}',event)">
-    <div class="monstre-card-head">
-      <div class="m-icon">${icon}</div>
-      <div class="monstre-head-info">
-        <div class="monstre-nom">${m.nom}${mjBadge}</div>
-        <div class="monstre-type">${m.type||''}${m.taille ? ' \u00b7 '+m.taille : ''}</div>
-      </div>
-      <span class="m-fp-badge">FP ${fpStr}</span>
-      <span class="monstre-chevron">\u25be</span>
-    </div>
-    <div class="monstre-card-div"></div>
-    <div class="monstre-card-body">
-      ${portraitBodyHTML}${mjSection}
-    </div>
-  </div>`;
-}
-function toggleCard(id, event) {
-  if (['A','BUTTON','INPUT'].includes(event.target.tagName)) return;
-  const card = document.getElementById('card-' + id);
-  if (!card) return;
-  const isOpen = card.classList.contains('open');
-  document.querySelectorAll('.monstre-card.open').forEach(c => c.classList.remove('open'));
-  if (!isOpen) card.classList.add('open');
-}
+document.addEventListener('mjmodechange', () => {
+  if (MONSTRE_DATA.length) { buildFilters(); applyFilters(); }
+});
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
